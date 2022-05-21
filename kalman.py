@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,17 +10,44 @@ class Schedule(object):
         :param period: please input schedule period
         """
         self.period = period
-        self.sigma = 0.01
+        self.sigma = 0.05
         self.mu = 1 / period
-        self.velocity = self.sigma * np.random.randn(self.period) + self.mu
-        self.progress = np.cumsum(self.velocity)
+        self.velocity = None
+        self.progress = None
+
+    def gen(self):
+        self.velocity = abs(np.random.normal(self.mu, self.sigma, self.period))
+        self.progress = np.insert(np.cumsum(self.velocity), 0, 0.0)
+        # self.velocity = np.append(self.velocity, 0.0)
+        # if progress array has already reached 1.0
+        b = False
+        index = 0
+        for i in range(self.progress.size):
+            if self.progress[i] > 1.0:
+                if not b:
+                    b = True
+                    index = i
+                self.progress[i] = 1.0
+        if b:
+            for i in range(index, self.velocity.size):
+                self.velocity[i] = 0.0
+        # if progress array not reached 1.0
+        while self.progress[-1] < 1.0:
+            velocity = abs(np.random.normal(self.mu, self.sigma))
+            progress = self.progress[-1] + velocity
+            if progress > 1.0:
+                progress = 1.0
+            self.velocity = np.append(self.velocity, velocity)
+            self.progress = np.append(self.progress, progress)
 
 
 if __name__ == '__main__':
     s = Schedule(15)
-    print("velocity:{}", s.velocity)
+    s.gen()
+    print("progress:", s.progress)
+    print("velocity:", s.velocity)
     plt.figure()
-    plt.plot(s.velocity, 'bo')
     plt.plot(s.progress, 'rx--')
+    plt.plot(s.velocity, 'bo')
     plt.show()
     pass
