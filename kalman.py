@@ -56,19 +56,19 @@ class KalmanFilter(object):
         self.X = np.zeros((2, self.len))
         self.P = np.array([[1., 0.], [0., 1.]])
         self.F = np.array([[1., 1.], [0., 1.]])
-        self.U = 0.01
-        self.V = 0.01
+        self.U = 0.001
+        self.V = 0.005
         self.Q = np.array([[self.U, 0.], [0., self.U]])
         self.R = np.array([[self.V, 0.], [0., self.V]])
         self.E = np.eye(2)
 
     def filter(self):
-        for i in range(2, self.len):
+        for i in range(1, self.len):
             self.X[:, i] = np.dot(self.F, self.X[:, i - 1])
             self.P = np.dot(np.dot(self.F, self.P), self.F.T) + self.Q
-            self.K = self.P / (self.P + self.R)
+            self.K = np.dot(self.P, np.linalg.inv(self.P + self.R))
             self.X[:, i] = self.X[:, i - 1] + np.dot(self.K, (self.Z[:, i] - self.X[:, i]))
-            self.X[0, i] = self.X[0, i - 1] + self.X[1, i - 1]
+            self.X[0, i] = self.X[0, i - 1] + self.X[1, i]
             self.P = np.dot((self.E - self.K), self.P)
 
 
