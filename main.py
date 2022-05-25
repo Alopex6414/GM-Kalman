@@ -5,6 +5,7 @@
 import matplotlib.pyplot as plt
 from schedule import Schedule
 from kalman import KalmanFilter
+from gm import GM
 
 
 def print_hi(name):
@@ -19,6 +20,8 @@ if __name__ == '__main__':
     s.gen()
     kf = KalmanFilter(s.progress, s.velocity)
     kf.filter()
+    gm = GM(kf.X + 1, 5)
+    gm._ratio_check()
     print("progress:", s.progress)
     print("velocity:", s.velocity)
     plt.figure()
