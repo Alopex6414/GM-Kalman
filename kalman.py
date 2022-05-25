@@ -13,7 +13,7 @@ class KalmanFilter(object):
         self.Z = np.zeros((2, self.len))
         self.Z[0, :] = progress
         self.Z[1, :] = velocity
-        self.K = np.zeros((1, self.len))
+        self.K = np.zeros((2, self.len))
         self.X = np.zeros((2, self.len))
         self.P = np.array([[1., 0.], [0., 1.]])
         self.F = np.array([[1., 1.], [0., 1.]])
