@@ -20,8 +20,8 @@ if __name__ == '__main__':
     s.gen()
     kf = KalmanFilter(s.progress, s.velocity)
     kf.filter()
-    gm = GM(kf.X + 1, 5)
-    gm._ratio_check()
+    gm = GM(kf.X, 5)
+    gm.gray_predict()
     print("progress:", s.progress)
     print("velocity:", s.velocity)
     plt.figure()
@@ -29,6 +29,7 @@ if __name__ == '__main__':
     plt.plot(s.velocity, 'bo')
     plt.plot(kf.X[0, :], 'gx--')
     plt.plot(kf.X[1, :], 'yo')
+    plt.plot(gm.G, 'mx--')
     plt.show()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
