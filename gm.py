@@ -18,6 +18,9 @@ class GM(object):
         self.a = None  # gray develop coefficient
         self.b = None  # gray offset
         self.c = None  # gray matrix
+        self.E = None  # epsilon array
+        self.Ebar = None  # epsilon average
+        self.Eeva = None  # evaluate model
 
     def _ratio_check(self):
         lamb = np.zeros(len(self.D0))
@@ -36,6 +39,21 @@ class GM(object):
                 n = i
                 break
         return b, n
+
+    def _error_check(self):
+        # remain error check
+        G0 = self.G[0:len(self.D0)]
+        self.E = np.abs(self.D0 - G0) / self.D0
+        self.Ebar = np.mean(self.E[1:len(self.E)])
+        # evaluate model accuracy
+        if self.Ebar < 0.1:
+            self.Eeva = "E model evaluate result very good."
+        elif self.Ebar < 0.2:
+            self.Eeva = "E model evaluate result can be accepted."
+        else:
+            self.Eeva = "E model evaluate result can not be accepted."
+        # ratio proportion check
+        print(self.E)
 
     def gray_predict(self):
         # pre-condition before ratio check
@@ -70,6 +88,9 @@ class GM(object):
         # restore pre-condition
         self.G[0] = self.D0[0]
         self.G = self.G - 1
+        self.D0 = self.D0 - 1
+        # error check for predict sequence
+        self._error_check()
 
 
 if __name__ == '__main__':
