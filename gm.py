@@ -20,7 +20,12 @@ class GM(object):
         self.c = None  # gray matrix
         self.E = None  # epsilon array
         self.Ebar = None  # epsilon average
-        self.Eeva = None  # evaluate model
+        self.Eeva = None  # evaluate model (epsilon)
+        self.R = None  # rou array
+        self.Rbar = None  # rou average
+        self.Reva = None  # evaluate model (rou)
+        self.S = None  # variance proportion
+        self.P = None  # small probability
 
     def _ratio_check(self):
         lamb = np.zeros(len(self.D0))
@@ -45,15 +50,39 @@ class GM(object):
         G0 = self.G[0:len(self.D0)]
         self.E = np.abs(self.D0 - G0) / self.D0
         self.Ebar = np.mean(self.E[1:len(self.E)])
-        # evaluate model accuracy
+        # evaluate model accuracy (epsilon)
         if self.Ebar < 0.1:
             self.Eeva = "E model evaluate result very good."
         elif self.Ebar < 0.2:
             self.Eeva = "E model evaluate result can be accepted."
         else:
             self.Eeva = "E model evaluate result can not be accepted."
-        # ratio proportion check
-        print(self.E)
+        # ratio proportion error check
+        lamb = np.zeros(len(self.D0))
+        # ratio calculate
+        for i in range(1, len(self.D0)):
+            lamb[i] = self.D0[i - 1] / self.D0[i]
+        lamb = lamb[1:len(lamb)]
+        self.R = np.zeros(len(lamb))
+        for i in range(0, len(lamb)):
+            self.R[i] = 1. - (1. - 0.5 * self.a) / (1. + 0.5 * self.a) * lamb[i]
+        self.Rbar = np.mean(self.R[1:len(self.E)])
+        # evaluate model accuracy (rou)
+        if self.Rbar < 0.1:
+            self.Reva = "R model evaluate result very good."
+        elif self.Rbar < 0.2:
+            self.Reva = "R model evaluate result can be accepted."
+        else:
+            self.Reva = "R model evaluate result can not be accepted."
+        # variance ratio proportion error check
+        self.S = np.var(self.E[1:len(self.E)]) / np.var(self.D0[1:len(self.D0)])
+        # small probability error check
+        std = np.std(self.D0[1:len(self.D0)])
+        count = 0
+        for i in range(1, len(self.E)):
+            if self.E[i] <= std:
+                count = count + 1
+        self.P = count / len(self.E[1:])
 
     def gray_predict(self):
         # pre-condition before ratio check
