@@ -25,6 +25,7 @@ class GM(object):
         self.Rbar = None  # rou average
         self.Reva = None  # evaluate model (rou)
         self.S = None  # variance proportion
+        self.P = None  # small probability
 
     def _ratio_check(self):
         lamb = np.zeros(len(self.D0))
@@ -76,7 +77,12 @@ class GM(object):
         # variance ratio proportion error check
         self.S = np.var(self.E[1:len(self.E)]) / np.var(self.D0[1:len(self.D0)])
         # small probability error check
-        print(self.R)
+        std = np.std(self.D0[1:len(self.D0)])
+        count = 0
+        for i in range(1, len(self.E)):
+            if self.E[i] <= std:
+                count = count + 1
+        self.P = count / len(self.E[1:])
 
     def gray_predict(self):
         # pre-condition before ratio check
