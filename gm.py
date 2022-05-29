@@ -24,6 +24,7 @@ class GM(object):
         self.R = None  # rou array
         self.Rbar = None  # rou average
         self.Reva = None  # evaluate model (rou)
+        self.S = None  # variance proportion
 
     def _ratio_check(self):
         lamb = np.zeros(len(self.D0))
@@ -55,7 +56,7 @@ class GM(object):
             self.Eeva = "E model evaluate result can be accepted."
         else:
             self.Eeva = "E model evaluate result can not be accepted."
-        # ratio proportion check
+        # ratio proportion error check
         lamb = np.zeros(len(self.D0))
         # ratio calculate
         for i in range(1, len(self.D0)):
@@ -72,7 +73,9 @@ class GM(object):
             self.Reva = "R model evaluate result can be accepted."
         else:
             self.Reva = "R model evaluate result can not be accepted."
-
+        # variance ratio proportion error check
+        self.S = np.var(self.E[1:len(self.E)]) / np.var(self.D0[1:len(self.D0)])
+        # small probability error check
         print(self.R)
 
     def gray_predict(self):
