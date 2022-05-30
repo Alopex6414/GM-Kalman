@@ -47,9 +47,9 @@ class GM(object):
 
     def _error_check(self):
         # remain error check
-        G0 = self.G[0:len(self.D0)]
-        self.E = np.abs(self.D0 - G0) / self.D0
-        self.Ebar = np.mean(self.E[1:len(self.E)])
+        G0 = self.G[1:len(self.D0)]
+        self.E = np.abs(self.D0[1:] - G0) / self.D0[1:]
+        self.Ebar = np.mean(self.E)
         # evaluate model accuracy (epsilon)
         if self.Ebar < 0.1:
             self.Eeva = "E model evaluate result very good."
@@ -75,11 +75,11 @@ class GM(object):
         else:
             self.Reva = "R model evaluate result can not be accepted."
         # variance ratio proportion error check
-        self.S = np.var(self.E[1:len(self.E)]) / np.var(self.D0[1:len(self.D0)])
+        self.S = np.var(self.E) / np.var(self.D0[1:len(self.D0)])
         # small probability error check
         std = np.std(self.D0[1:len(self.D0)])
         count = 0
-        for i in range(1, len(self.E)):
+        for i in range(0, len(self.E)):
             if self.E[i] <= std:
                 count = count + 1
         self.P = count / len(self.E[1:])
@@ -120,6 +120,16 @@ class GM(object):
         self.D0 = self.D0 - 1
         # error check for predict sequence
         self._error_check()
+
+
+class GMControl(GM):
+    def __init__(self, array, n):
+        """
+        :param array: project schedule progress status array (numpy array type) (2x2)
+        :param n: project schedule progress status array actual length
+        """
+        self.X = array[0, 0:n]
+        super().__init__(array, n)
 
 
 if __name__ == '__main__':

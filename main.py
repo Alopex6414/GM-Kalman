@@ -5,7 +5,7 @@
 import matplotlib.pyplot as plt
 from schedule import Schedule
 from kalman import KalmanFilter
-from gm import GM
+from gm import GM, GMControl
 
 
 def print_hi(name):
@@ -22,6 +22,7 @@ if __name__ == '__main__':
     kf.filter()
     # gm = GM(kf.X, 5)
     # gm.gray_predict()
+    gm = GMControl(kf.X, 5)
     print("progress:", s.progress)
     print("velocity:", s.velocity)
     plt.figure()
