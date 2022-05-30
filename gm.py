@@ -122,5 +122,15 @@ class GM(object):
         self._error_check()
 
 
+class GMControl(GM):
+    def __init__(self, array, n):
+        """
+        :param array: project schedule progress status array (numpy array type) (2x2)
+        :param n: project schedule progress status array actual length
+        """
+        self.X = array[0, 0:n]
+        super().__init__(array, n)
+
+
 if __name__ == '__main__':
     pass
