@@ -22,7 +22,9 @@ if __name__ == '__main__':
     kf.filter()
     # gm = GM(kf.X, 5)
     # gm.gray_predict()
-    gm = GMControl(kf.X, 5)
+    # gm = GMControl(kf.X, 5)
+    # gm.gray_predict()
+    GMControl.setup_array(kf.X)
     print("progress:", s.progress)
     print("velocity:", s.velocity)
     plt.figure()
@@ -32,11 +34,14 @@ if __name__ == '__main__':
     plt.plot(kf.X[1, :], 'yo:')
     # plt.plot(gm.G, 'mx--')
     # test
-    for i in range(5, 14):
+    for i in range(5, 15):
         gm = GM(kf.X, i)
         gm.gray_predict()
         plt.plot(gm.G, 'mx--')
+        gmc = GMControl(kf.X, i)
+        gmc.gray_predict()
 
+    plt.plot(GMControl.X[0, :], 'kx--')
     # plot title & axis label
     plt.xlabel("time")
     plt.ylabel("progress")
