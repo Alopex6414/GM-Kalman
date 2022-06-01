@@ -16,7 +16,8 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
-    s = Schedule(15)
+    t = 15
+    s = Schedule(t)
     s.gen()
     kf = KalmanFilter(s.progress, s.velocity)
     kf.filter()
@@ -34,14 +35,14 @@ if __name__ == '__main__':
     plt.plot(kf.X[1, :], 'yo:')
     # plt.plot(gm.G, 'mx--')
     # test
-    for i in range(5, 15):
+    for i in range(5, len(kf.X[0])):
         gm = GM(kf.X, i)
         gm.gray_predict()
-        plt.plot(gm.G, 'mx--')
-        gmc = GMControl(kf.X, i)
+        plt.plot(gm.G, 'cx--')
+        gmc = GMControl(kf.X, i, t)
         gmc.gray_predict()
 
-    plt.plot(GMControl.X[0, :], 'kx--')
+    plt.plot(GMControl.X[0, :], 'mx--')
     # plot title & axis label
     plt.xlabel("time")
     plt.ylabel("progress")

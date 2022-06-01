@@ -125,12 +125,13 @@ class GM(object):
 class GMControl(GM):
     X = None
 
-    def __init__(self, array, n):
+    def __init__(self, array, n, t):
         """
         :param array: project schedule progress status array (numpy array type) (2x2)
         :param n: project schedule progress status array actual length
         """
         super(GMControl, self).__init__(array, n)
+        self.t = t
 
     @staticmethod
     def setup_array(array):
@@ -139,10 +140,12 @@ class GMControl(GM):
     def gray_predict(self):
         super(GMControl, self).gray_predict()
         # whether prediction will have delay?
-        if self.G[-1] < 1.:
-            GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[-1])
+        if self.G[self.t] < 1.:
+            GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[self.t])
         # update current progress
         GMControl.X[0, len(self.D0)] = GMControl.X[0, len(self.D0) - 1] + GMControl.X[1, len(self.D0)]
+        if GMControl.X[0, len(self.D0)] > 1.:
+            GMControl.X[0, len(self.D0)] = 1.
 
 
 if __name__ == '__main__':
