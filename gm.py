@@ -140,8 +140,14 @@ class GMControl(GM):
     def gray_predict(self):
         super(GMControl, self).gray_predict()
         # whether prediction will have delay?
-        if self.G[self.t] < 1.:
-            GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[self.t])
+        if len(self.D0) < self.t:
+            if self.G[self.t] < 1.:
+                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[self.t])
+                print(len(self.D0))
+        else:
+            if self.G[-1] < 1.:
+                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[-1])
+                print(len(self.D0))
         # update current progress
         GMControl.X[0, len(self.D0)] = GMControl.X[0, len(self.D0) - 1] + GMControl.X[1, len(self.D0)]
         if GMControl.X[0, len(self.D0)] > 1.:
