@@ -35,8 +35,8 @@ if __name__ == '__main__':
     plt.figure()
     plt.plot(s.progress, 'rx--')
     plt.plot(s.velocity, 'bo:')
-    #plt.plot(kf.X[0, :], 'gx--')
-    #plt.plot(kf.X[1, :], 'yo:')
+    # plt.plot(kf.X[0, :], 'gx--')
+    # plt.plot(kf.X[1, :], 'yo:')
     # plt.plot(gm.G, 'mx--')
     # test
     for i in range(5, len(kf.Z[0])):

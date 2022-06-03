@@ -15,6 +15,7 @@ class GM(object):
         self.Z1 = np.zeros(len(self.D0))
         self.F = np.zeros(len(self.array[0]))
         self.G = np.zeros(len(self.array[0]))
+        self.L = np.zeros(len(self.D0))  # ratio check
         self.a = None  # gray develop coefficient
         self.b = None  # gray offset
         self.c = None  # gray matrix
@@ -35,6 +36,7 @@ class GM(object):
         for i in range(1, len(self.D0)):
             lamb[i] = self.D0[i - 1]/self.D0[i]
         lamb = lamb[1:len(lamb)]
+        self.L = lamb
         # ratio check
         b = True
         n = 0
@@ -89,9 +91,11 @@ class GM(object):
         self.D0 = self.D0 + 1
         # ratio check for origin sequence
         b, n = self._ratio_check()
+        """
         if not b:
             print("Ratio check not pass: array[{}]".format(n))
             return
+        """
         # sequence cumulative generation
         self.D1 = np.cumsum(self.D0)
         # sequence next-to-average generation
@@ -149,7 +153,7 @@ class GMControl(GM):
                 GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[-1])
                 print(len(self.D0))
         # update current progress
-        GMControl.X[0, len(self.D0)] = GMControl.X[0, len(self.D0) - 1] + GMControl.X[1, len(self.D0)]
+        GMControl.X[0, len(self.D0)] = GMControl.X[0, len(self.D0) - 1] + GMControl.X[1, len(self.D0) - 1]
         if GMControl.X[0, len(self.D0)] > 1.:
             GMControl.X[0, len(self.D0)] = 1.
 
