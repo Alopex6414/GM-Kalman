@@ -30,6 +30,8 @@ class KalmanFilter(object):
             self.K = np.dot(self.P, np.linalg.inv(self.P + self.R))
             self.X[:, i] = self.X[:, i - 1] + np.dot(self.K, (self.Z[:, i] - self.X[:, i]))
             self.X[0, i] = self.X[0, i - 1] + self.X[1, i]
+            if self.X[0, i] > 1.:
+                self.X[0, i] = 1.
             self.P = np.dot((self.E - self.K), self.P)
 
 

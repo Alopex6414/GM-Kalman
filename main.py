@@ -33,12 +33,21 @@ if __name__ == '__main__':
     # gm.gray_predict()
     GMControl.setup_array(kf.Z)
     plt.figure()
+    plt.subplot(2, 2, 1)
     plt.plot(s.progress, 'rx--')
     plt.plot(s.velocity, 'bo:')
-    # plt.plot(kf.X[0, :], 'gx--')
-    # plt.plot(kf.X[1, :], 'yo:')
+    plt.plot(kf.X[0, :], 'gx--')
+    plt.plot(kf.X[1, :], 'yo:')
     # plt.plot(gm.G, 'mx--')
-    # test
+    # plot title & axis & grid label
+    plt.grid(linestyle='--', linewidth=1.0)
+    plt.xlabel("time")
+    plt.ylabel("progress")
+    plt.title("Kalman Filter")
+    # predict
+    plt.subplot(2, 2, 2)
+    plt.plot(kf.Z[0, :], 'gx--')
+    plt.plot(kf.Z[1, :], 'yo:')
     for i in range(5, len(kf.Z[0])):
         gm = GM(kf.Z, i)
         gm.gray_predict()
@@ -49,14 +58,12 @@ if __name__ == '__main__':
     plt.plot(GMControl.X[0, :], 'mx--')
     print("progress(control):", GMControl.X[0])
     print("velocity(control):", GMControl.X[1])
-    # plot title & axis label
+    # plot title & axis & grid label
+    plt.grid(linestyle='--', linewidth=1.0)
     plt.xlabel("time")
     plt.ylabel("progress")
-    plt.title("GM-Kalman Simulation")
-
-    # plot grid
-    plt.grid(linestyle='--', linewidth=1.0)
-
+    plt.title("GM Predict Control")
+    # plot show
     plt.show()
     print('hello')
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
