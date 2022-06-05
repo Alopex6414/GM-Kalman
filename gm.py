@@ -119,7 +119,7 @@ class GM(object):
         for i in range(1, len(self.array[0])):
             self.G[i] = self.F[i] - self.F[i - 1]
         # restore pre-condition
-        self.G[0] = self.D0[0]
+        # self.G[0] = self.D0[0]
         self.G = self.G - 1
         self.D0 = self.D0 - 1
         # error check for predict sequence
@@ -146,11 +146,11 @@ class GMControl(GM):
         # whether prediction will have delay?
         if len(self.D0) < self.t:
             if self.G[self.t] < 1.:
-                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[self.t])
+                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[self.t])
                 print(len(self.D0))
         else:
             if self.G[-1] < 1.:
-                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.25 * (1. - self.G[-1])
+                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[-1])
                 print(len(self.D0))
         # update current progress
         GMControl.X[0, len(self.D0)] = GMControl.X[0, len(self.D0) - 1] + GMControl.X[1, len(self.D0) - 1]
