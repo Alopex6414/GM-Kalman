@@ -87,6 +87,7 @@ if __name__ == '__main__':
     if not b:
         print("Can not get control finish time")
     plt.subplot(2, 2, 3)
+    plt.bar("plan", t)
     plt.bar("original", to)
     plt.bar("control", tc)
     # plot title & axis & grid label
