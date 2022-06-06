@@ -15,7 +15,11 @@ class Schedule(object):
         self.progress = None
 
     def gen(self):
-        self.velocity = abs(np.random.normal(self.mu, self.sigma, self.period))
+        self.velocity = np.random.normal(self.mu, self.sigma, self.period)
+        # velocity should not less than zero
+        for i in range(0, len(self.velocity)):
+            if self.velocity[i] < 0.:
+                self.velocity[i] = 0.
         self.progress = np.insert(np.cumsum(self.velocity), 0, 0.0)
         # self.velocity = np.append(self.velocity, 0.0)
         # if progress array has already reached 1.0
