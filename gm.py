@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import numpy as np
+import copy
 
 
 class GM(object):
@@ -139,7 +140,7 @@ class GMControl(GM):
 
     @staticmethod
     def setup_array(array):
-        GMControl.X = array
+        GMControl.X = copy.deepcopy(array)
 
     def gray_predict(self):
         super(GMControl, self).gray_predict()
