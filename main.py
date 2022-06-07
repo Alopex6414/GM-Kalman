@@ -3,6 +3,8 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import matplotlib.pyplot as plt
+import numpy as np
+
 from schedule import Schedule
 from kalman import KalmanFilter
 from gm import GM, GMControl
@@ -31,7 +33,7 @@ if __name__ == '__main__':
     # gm.gray_predict()
     # gm = GMControl(kf.X, 5)
     # gm.gray_predict()
-    GMControl.setup_array(kf.Z)
+    GMControl.setup_array(kf.X)
     plt.figure()
     """Plot1 Kalman Filter"""
     plt.subplot(2, 2, 1)
@@ -48,13 +50,13 @@ if __name__ == '__main__':
     # predict
     """Plot3 GM Predict Control"""
     plt.subplot(2, 2, 2)
-    plt.plot(kf.Z[0, :], 'gx--')
-    plt.plot(kf.Z[1, :], 'yo:')
-    for i in range(5, len(kf.Z[0])):
-        gm = GM(kf.Z, i)
+    plt.plot(kf.X[0, :], 'gx--')
+    plt.plot(kf.X[1, :], 'yo:')
+    for i in range(5, len(kf.X[0])):
+        gm = GM(kf.X, i)
         gm.gray_predict()
         plt.plot(gm.G, 'cx--')
-        gmc = GMControl(kf.Z, i, t)
+        gmc = GMControl(kf.X, i, t)
         gmc.gray_predict()
 
     plt.plot(GMControl.X[0, :], 'mx--')
@@ -95,6 +97,10 @@ if __name__ == '__main__':
     plt.xlabel("methods")
     plt.ylabel("time")
     plt.title("Task Finish Time")
+    """Plot4 Tasks Scatter"""
+    plt.subplot(2, 2, 4)
+    plt.pie(x=np.array([t, to, tc]), labels=["plan", "original", "control"], explode=(0, 0.2, 0.2), autopct='%.2f%%')
+    plt.title("Finish Proportion")
     # plot show
     plt.show()
     print('hello')
