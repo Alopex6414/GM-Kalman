@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
+import numpy as np
+
 from schedule import Schedule
 from kalman import KalmanFilter
 from gm import GM, GMControl
@@ -7,6 +10,9 @@ from gm import GM, GMControl
 
 class SimulatorSingle(object):
     def __init__(self, period):
+        """
+        :param period: please input schedule period
+        """
         self.period = period
         self.buffer = 0
         self.time_expect = self.period
@@ -53,7 +59,43 @@ class SimulatorSingle(object):
             self.time_gm = len(GMControl.X[0, :])
 
 
+class SimulatorMultiple(SimulatorSingle):
+    def __init__(self, period, number):
+        """
+        :param period: please input schedule period
+        """
+        self.number = number
+        self.arr_ex = list()
+        self.arr_cc = list()
+        self.arr_gm = list()
+        super(SimulatorMultiple, self).__init__(period)
+
+    def simulate(self):
+        for i in range(0, self.number):
+            super(SimulatorMultiple, self).simulate()
+            self.arr_ex.append(self.time_expect)
+            self.arr_cc.append(self.time_cc)
+            self.arr_gm.append(self.time_gm)
+
+    def show(self):
+        # plot preparation
+        plt.figure()
+        # subplot1 bar
+        # plt.subplot(2, 2, 1)'
+        plt.subplot()
+        plt.bar(np.arange(self.number), self.arr_ex, color="lightcoral", label="expect")
+        plt.bar(np.arange(self.number), self.arr_cc, color="lightskyblue", label="critical chain")
+        plt.bar(np.arange(self.number), self.arr_gm, color="lightgreen", label="gray model")
+        plt.legend()
+        plt.grid(linestyle='--', linewidth=1.0)
+        plt.xlabel("number")
+        plt.ylabel("time")
+        plt.title("Project Finish Time")
+        # plot show
+        plt.show()
+
+
 if __name__ == '__main__':
-    s = SimulatorSingle(20)
+    s = SimulatorMultiple(15, 25)
     s.simulate()
-    print("done~")
+    s.show()
