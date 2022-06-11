@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
+import numpy as np
+
 from schedule import Schedule
 from kalman import KalmanFilter
 from gm import GM, GMControl
@@ -7,6 +10,9 @@ from gm import GM, GMControl
 
 class SimulatorSingle(object):
     def __init__(self, period):
+        """
+        :param period: please input schedule period
+        """
         self.period = period
         self.buffer = 0
         self.time_expect = self.period
@@ -53,7 +59,62 @@ class SimulatorSingle(object):
             self.time_gm = len(GMControl.X[0, :])
 
 
+class SimulatorMultiple(SimulatorSingle):
+    def __init__(self, period, number):
+        """
+        :param period: please input schedule period
+        """
+        self.number = number
+        self.arr_ex = np.empty(shape=(0, 0))
+        self.arr_cc = np.empty(shape=(0, 0))
+        self.arr_gm = np.empty(shape=(0, 0))
+        self.ave_ex = None
+        self.ave_cc = None
+        self.ave_gm = None
+
+        super(SimulatorMultiple, self).__init__(period)
+
+    def simulate(self):
+        # fill all data
+        for i in range(0, self.number):
+            super(SimulatorMultiple, self).simulate()
+            self.arr_ex = np.append(self.arr_ex, self.time_expect)
+            self.arr_cc = np.append(self.arr_cc, self.time_cc)
+            self.arr_gm = np.append(self.arr_gm, self.time_gm)
+        # calculate index
+        self.ave_ex = self.time_expect
+        self.ave_cc = np.mean(self.arr_cc)
+        self.ave_gm = np.mean(self.arr_gm)
+        print("hello")
+
+    def show(self):
+        # plot preparation
+        x = np.arange(self.number)
+        # subplot1 bar
+        plt.figure()
+        plt.bar(x, self.arr_ex, color="lightcoral", label="expect")
+        plt.bar(x, self.arr_cc, color="lightskyblue", label="critical chain")
+        plt.bar(x, self.arr_gm, color="lightgreen", label="gray model")
+        plt.legend()
+        plt.grid(linestyle='--', linewidth=1.0)
+        plt.xlabel("number")
+        plt.ylabel("time")
+        plt.title("Project Finish Time")
+        plt.show()
+        # subplot2 line
+        plt.figure()
+        plt.plot(x, self.arr_ex, color="lightcoral", marker="x", linestyle="--", label="expect")
+        plt.plot(x, self.arr_cc, color="lightskyblue", marker="o", linestyle="--", label="critical chain")
+        plt.plot(x, self.arr_gm, color="lightgreen", marker="o", linestyle="--", label="gray model")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("number")
+        plt.ylabel("time")
+        plt.title("Project Finish Distribution")
+        plt.show()
+
+
 if __name__ == '__main__':
-    s = SimulatorSingle(20)
+    s = SimulatorMultiple(15, 25)
     s.simulate()
-    print("done~")
+    s.show()
