@@ -68,14 +68,24 @@ class SimulatorMultiple(SimulatorSingle):
         self.arr_ex = np.empty(shape=(0, 0))
         self.arr_cc = np.empty(shape=(0, 0))
         self.arr_gm = np.empty(shape=(0, 0))
+        self.ave_ex = None
+        self.ave_cc = None
+        self.ave_gm = None
+
         super(SimulatorMultiple, self).__init__(period)
 
     def simulate(self):
+        # fill all data
         for i in range(0, self.number):
             super(SimulatorMultiple, self).simulate()
             self.arr_ex = np.append(self.arr_ex, self.time_expect)
             self.arr_cc = np.append(self.arr_cc, self.time_cc)
             self.arr_gm = np.append(self.arr_gm, self.time_gm)
+        # calculate index
+        self.ave_ex = self.time_expect
+        self.ave_cc = np.mean(self.arr_cc)
+        self.ave_gm = np.mean(self.arr_gm)
+        print("hello")
 
     def show(self):
         # plot preparation

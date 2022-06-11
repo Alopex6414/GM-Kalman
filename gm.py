@@ -51,6 +51,9 @@ class GM(object):
     def _error_check(self):
         # remain error check
         G0 = self.G[1:len(self.D0)]
+        for i in range(1, len(self.D0)):
+            if self.D0[i] == 0.:
+                self.D0[i] = 0.0001
         self.E = np.abs(self.D0[1:] - G0) / self.D0[1:]
         self.Ebar = np.mean(self.E)
         # evaluate model accuracy (epsilon)
