@@ -65,33 +65,42 @@ class SimulatorMultiple(SimulatorSingle):
         :param period: please input schedule period
         """
         self.number = number
-        self.arr_ex = list()
-        self.arr_cc = list()
-        self.arr_gm = list()
+        self.arr_ex = np.empty(shape=(0, 0))
+        self.arr_cc = np.empty(shape=(0, 0))
+        self.arr_gm = np.empty(shape=(0, 0))
         super(SimulatorMultiple, self).__init__(period)
 
     def simulate(self):
         for i in range(0, self.number):
             super(SimulatorMultiple, self).simulate()
-            self.arr_ex.append(self.time_expect)
-            self.arr_cc.append(self.time_cc)
-            self.arr_gm.append(self.time_gm)
+            self.arr_ex = np.append(self.arr_ex, self.time_expect)
+            self.arr_cc = np.append(self.arr_cc, self.time_cc)
+            self.arr_gm = np.append(self.arr_gm, self.time_gm)
 
     def show(self):
         # plot preparation
-        plt.figure()
+        x = np.arange(self.number)
         # subplot1 bar
-        # plt.subplot(2, 2, 1)'
-        plt.subplot()
-        plt.bar(np.arange(self.number), self.arr_ex, color="lightcoral", label="expect")
-        plt.bar(np.arange(self.number), self.arr_cc, color="lightskyblue", label="critical chain")
-        plt.bar(np.arange(self.number), self.arr_gm, color="lightgreen", label="gray model")
+        plt.figure()
+        plt.bar(x, self.arr_ex, color="lightcoral", label="expect")
+        plt.bar(x, self.arr_cc, color="lightskyblue", label="critical chain")
+        plt.bar(x, self.arr_gm, color="lightgreen", label="gray model")
         plt.legend()
         plt.grid(linestyle='--', linewidth=1.0)
         plt.xlabel("number")
         plt.ylabel("time")
         plt.title("Project Finish Time")
-        # plot show
+        plt.show()
+        # subplot2 line
+        plt.figure()
+        plt.plot(x, self.arr_ex, color="lightcoral", marker="x", linestyle="--", label="expect")
+        plt.plot(x, self.arr_cc, color="lightskyblue", marker="o", linestyle="--", label="critical chain")
+        plt.plot(x, self.arr_gm, color="lightgreen", marker="o", linestyle="--", label="gray model")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("number")
+        plt.ylabel("time")
+        plt.title("Project Finish Distribution")
         plt.show()
 
 
