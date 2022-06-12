@@ -75,6 +75,8 @@ class SimulatorMultiple(SimulatorSingle):
         self.std_gm = None
         self.dist_cc = dict()
         self.dist_gm = dict()
+        self.eva_cc = dict()
+        self.eva_gm = dict()
 
         super(SimulatorMultiple, self).__init__(period)
 
@@ -100,6 +102,11 @@ class SimulatorMultiple(SimulatorSingle):
         for k in keys:
             v = self.arr_gm[self.arr_gm == k].size
             self.dist_gm[k+0.2] = v
+        # summary evaluation
+        self.eva_cc["overdue"] = np.sum(self.arr_cc > self.time_expect)
+        self.eva_cc["on_schedule"] = np.sum(self.arr_cc <= self.time_expect)
+        self.eva_gm["overdue"] = np.sum(self.arr_gm > self.time_expect)
+        self.eva_gm["on_schedule"] = np.sum(self.arr_gm <= self.time_expect)
         print("hello")
 
     def show(self):
@@ -129,20 +136,30 @@ class SimulatorMultiple(SimulatorSingle):
         plt.title("Project Finish Distribution")
         plt.show()
         """
-        # subplot3 bar
+        # subplot3 bar (Finish Time Distribution Statistic)
         plt.figure()
-        plt.bar(self.dist_cc.keys(), self.dist_cc.values(), width=0.4, color="lightcoral", label="critical chain")
-        plt.bar(self.dist_gm.keys(), self.dist_gm.values(), width=0.4, color="lightskyblue", label="gray model")
+        plt.bar(self.dist_cc.keys(), self.dist_cc.values(), width=0.4, color="lightcoral", label="Critical Chain")
+        plt.bar(self.dist_gm.keys(), self.dist_gm.values(), width=0.4, color="lightskyblue", label="Gray Model")
         plt.legend()
         plt.grid(True)
-        plt.xlabel("time")
-        plt.ylabel("number")
+        plt.xlabel("Time")
+        plt.ylabel("Number")
         plt.title("Project Finish Time Distribution Statistic")
         plt.show()
-        # subplot4 scatter
+        # subplot4 bar(Finish Time Overdue & On Schedule)
+        plt.figure()
+        plt.bar("CC", self.eva_cc.get("on_schedule"), width=0.4, color="lightskyblue")
+        plt.bar("CC", self.eva_cc.get("overdue"), bottom=self.eva_cc.get("on_schedule"), width=0.4, color="lightcoral")
+        plt.bar("GM", self.eva_gm.get("on_schedule"), width=0.4, color="lightskyblue")
+        plt.bar("GM", self.eva_gm.get("overdue"), bottom=self.eva_gm.get("on_schedule"), width=0.4, color="lightcoral")
+        plt.grid(True)
+        plt.xlabel("Schedule Management Method")
+        plt.ylabel("Number")
+        plt.title("Project Finish Time Overdue & On Schedule")
+        plt.show()
 
 
 if __name__ == '__main__':
-    s = SimulatorMultiple(15, 25)
+    s = SimulatorMultiple(15, 10000)
     s.simulate()
     s.show()
