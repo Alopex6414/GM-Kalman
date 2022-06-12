@@ -145,6 +145,7 @@ class SimulatorMultiple(SimulatorSingle):
         plt.xlabel("Time")
         plt.ylabel("Number")
         plt.title("Project Finish Time Distribution Statistic")
+        # plt.savefig("./figure/dist.png")
         plt.show()
         # subplot4 bar(Finish Time Overdue & On Schedule)
         plt.figure()
@@ -156,6 +157,7 @@ class SimulatorMultiple(SimulatorSingle):
         plt.xlabel("Schedule Management Method")
         plt.ylabel("Number")
         plt.title("Project Finish Time Overdue & On Schedule")
+        # plt.savefig("./figure/overdue.png")
         plt.show()
 
 
