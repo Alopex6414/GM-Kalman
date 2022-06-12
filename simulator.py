@@ -71,6 +71,12 @@ class SimulatorMultiple(SimulatorSingle):
         self.ave_ex = None
         self.ave_cc = None
         self.ave_gm = None
+        self.std_cc = None
+        self.std_gm = None
+        self.dist_cc = dict()
+        self.dist_gm = dict()
+        self.eva_cc = dict()
+        self.eva_gm = dict()
 
         super(SimulatorMultiple, self).__init__(period)
 
@@ -81,15 +87,32 @@ class SimulatorMultiple(SimulatorSingle):
             self.arr_ex = np.append(self.arr_ex, self.time_expect)
             self.arr_cc = np.append(self.arr_cc, self.time_cc)
             self.arr_gm = np.append(self.arr_gm, self.time_gm)
-        # calculate index
+        # calculate evaluation index
         self.ave_ex = self.time_expect
         self.ave_cc = np.mean(self.arr_cc)
+        self.std_cc = np.std(self.arr_cc)
         self.ave_gm = np.mean(self.arr_gm)
+        self.std_gm = np.std(self.arr_gm)
+        # statistical evaluation
+        keys = np.unique(self.arr_cc)
+        for k in keys:
+            v = self.arr_cc[self.arr_cc == k].size
+            self.dist_cc[k-0.2] = v
+        keys = np.unique(self.arr_gm)
+        for k in keys:
+            v = self.arr_gm[self.arr_gm == k].size
+            self.dist_gm[k+0.2] = v
+        # summary evaluation
+        self.eva_cc["overdue"] = np.sum(self.arr_cc > self.time_expect)
+        self.eva_cc["on_schedule"] = np.sum(self.arr_cc <= self.time_expect)
+        self.eva_gm["overdue"] = np.sum(self.arr_gm > self.time_expect)
+        self.eva_gm["on_schedule"] = np.sum(self.arr_gm <= self.time_expect)
         print("hello")
 
     def show(self):
         # plot preparation
         x = np.arange(self.number)
+        """
         # subplot1 bar
         plt.figure()
         plt.bar(x, self.arr_ex, color="lightcoral", label="expect")
@@ -112,9 +135,33 @@ class SimulatorMultiple(SimulatorSingle):
         plt.ylabel("time")
         plt.title("Project Finish Distribution")
         plt.show()
+        """
+        # subplot3 bar (Finish Time Distribution Statistic)
+        plt.figure()
+        plt.bar(self.dist_cc.keys(), self.dist_cc.values(), width=0.4, color="lightcoral", label="Critical Chain")
+        plt.bar(self.dist_gm.keys(), self.dist_gm.values(), width=0.4, color="lightskyblue", label="Gray Model")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Number")
+        plt.title("Project Finish Time Distribution Statistic")
+        # plt.savefig("./figure/dist.png")
+        plt.show()
+        # subplot4 bar(Finish Time Overdue & On Schedule)
+        plt.figure()
+        plt.bar("CC", self.eva_cc.get("on_schedule"), width=0.4, color="lightskyblue")
+        plt.bar("CC", self.eva_cc.get("overdue"), bottom=self.eva_cc.get("on_schedule"), width=0.4, color="lightcoral")
+        plt.bar("GM", self.eva_gm.get("on_schedule"), width=0.4, color="lightskyblue")
+        plt.bar("GM", self.eva_gm.get("overdue"), bottom=self.eva_gm.get("on_schedule"), width=0.4, color="lightcoral")
+        plt.grid(True)
+        plt.xlabel("Schedule Management Method")
+        plt.ylabel("Number")
+        plt.title("Project Finish Time Overdue & On Schedule")
+        # plt.savefig("./figure/overdue.png")
+        plt.show()
 
 
 if __name__ == '__main__':
-    s = SimulatorMultiple(15, 25)
+    s = SimulatorMultiple(15, 10000)
     s.simulate()
     s.show()
