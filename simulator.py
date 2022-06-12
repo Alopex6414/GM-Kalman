@@ -70,7 +70,11 @@ class SimulatorMultiple(SimulatorSingle):
         self.arr_gm = np.empty(shape=(0, 0))
         self.ave_ex = None
         self.ave_cc = None
+        self.std_cc = None
+        self.dist_cc = dict()
         self.ave_gm = None
+        self.std_gm = None
+        self.dist_gm = dict()
 
         super(SimulatorMultiple, self).__init__(period)
 
@@ -81,10 +85,21 @@ class SimulatorMultiple(SimulatorSingle):
             self.arr_ex = np.append(self.arr_ex, self.time_expect)
             self.arr_cc = np.append(self.arr_cc, self.time_cc)
             self.arr_gm = np.append(self.arr_gm, self.time_gm)
-        # calculate index
+        # calculate evaluation index
         self.ave_ex = self.time_expect
         self.ave_cc = np.mean(self.arr_cc)
+        self.std_cc = np.std(self.arr_cc)
         self.ave_gm = np.mean(self.arr_gm)
+        self.std_gm = np.std(self.arr_gm)
+        # statistical evaluation
+        keys = np.unique(self.arr_cc)
+        for k in keys:
+            v = self.arr_cc[self.arr_cc == k].size
+            self.dist_cc[k-0.2] = v
+        keys = np.unique(self.arr_gm)
+        for k in keys:
+            v = self.arr_gm[self.arr_gm == k].size
+            self.dist_gm[k+0.2] = v
         print("hello")
 
     def show(self):
@@ -112,9 +127,19 @@ class SimulatorMultiple(SimulatorSingle):
         plt.ylabel("time")
         plt.title("Project Finish Distribution")
         plt.show()
+        # subplot3 bar
+        plt.figure()
+        plt.bar(self.dist_cc.keys(), self.dist_cc.values(), width=0.4, color="lightcoral", label="critical chain")
+        plt.bar(self.dist_gm.keys(), self.dist_gm.values(), width=0.4, color="lightskyblue", label="gray model")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("time")
+        plt.ylabel("number")
+        plt.title("Project Finish Statistic")
+        plt.show()
 
 
 if __name__ == '__main__':
-    s = SimulatorMultiple(15, 25)
+    s = SimulatorMultiple(15, 2500)
     s.simulate()
     s.show()
