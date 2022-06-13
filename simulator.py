@@ -73,6 +73,8 @@ class SimulatorMultiple(SimulatorSingle):
         self.ave_gm = None
         self.std_cc = None
         self.std_gm = None
+        self.dev_cc = np.empty(shape=(0, 0))
+        self.dev_gm = np.empty(shape=(0, 0))
         self.dist_cc = dict()
         self.dist_gm = dict()
         self.eva_cc = dict()
@@ -87,6 +89,8 @@ class SimulatorMultiple(SimulatorSingle):
             self.arr_ex = np.append(self.arr_ex, self.time_expect)
             self.arr_cc = np.append(self.arr_cc, self.time_cc)
             self.arr_gm = np.append(self.arr_gm, self.time_gm)
+            self.dev_cc = np.append(self.dev_cc, (self.time_cc - self.time_expect) / self.time_expect)
+            self.dev_gm = np.append(self.dev_gm, (self.time_gm - self.time_expect) / self.time_expect)
         # calculate evaluation index
         self.ave_ex = self.time_expect
         self.ave_cc = np.mean(self.arr_cc)
@@ -159,9 +163,20 @@ class SimulatorMultiple(SimulatorSingle):
         plt.title("Project Finish Time Overdue & On Schedule")
         # plt.savefig("./figure/overdue.png")
         plt.show()
+        # subplot5 line(Finish Time Deviation Distribution)
+        plt.figure()
+        plt.plot(x, self.dev_cc, color="lightcoral", marker="o",  linestyle="--", label="Critical Chain")
+        plt.plot(x, self.dev_gm, color="lightskyblue", marker="o",  linestyle="--", label="Gray Model")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Deviation")
+        plt.title("Project Finish Time Deviation Distribution")
+        # plt.savefig("./figure/deviation.png")
+        plt.show()
 
 
 if __name__ == '__main__':
-    s = SimulatorMultiple(15, 10000)
+    s = SimulatorMultiple(15, 200)
     s.simulate()
     s.show()
