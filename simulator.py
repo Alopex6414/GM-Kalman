@@ -79,6 +79,10 @@ class SimulatorMultiple(SimulatorSingle):
         self.dist_gm = dict()
         self.eva_cc = dict()
         self.eva_gm = dict()
+        self.adv_cc = dict()
+        self.adv_gm = dict()
+        self.dev_ave_cc = None
+        self.dev_ave_gm = None
 
         super(SimulatorMultiple, self).__init__(period)
 
@@ -111,6 +115,17 @@ class SimulatorMultiple(SimulatorSingle):
         self.eva_cc["on_schedule"] = np.sum(self.arr_cc <= self.time_expect)
         self.eva_gm["overdue"] = np.sum(self.arr_gm > self.time_expect)
         self.eva_gm["on_schedule"] = np.sum(self.arr_gm <= self.time_expect)
+        # advance evaluation
+        self.dev_ave_cc = np.mean(self.dev_cc)
+        self.dev_ave_gm = np.mean(self.dev_gm)
+        keys = np.unique(self.dev_cc)
+        for k in keys:
+            v = self.dev_cc[self.dev_cc == k].size
+            self.adv_cc[k] = v
+        keys = np.unique(self.dev_gm)
+        for k in keys:
+            v = self.dev_gm[self.dev_gm == k].size
+            self.adv_gm[k] = v
         print("hello")
 
     def show(self):
@@ -174,9 +189,24 @@ class SimulatorMultiple(SimulatorSingle):
         plt.title("Project Finish Time Deviation Distribution")
         # plt.savefig("./figure/deviation.png")
         plt.show()
+        # subplot6 line(Finish Time Advance Distribution)
+        plt.figure()
+        plt.plot(self.adv_cc.keys(), self.adv_cc.values(), color="lightcoral", marker="o", linestyle="--",
+                 label="Critical Chain")
+        plt.plot(self.adv_gm.keys(), self.adv_gm.values(), color="lightskyblue", marker="o", linestyle="--",
+                 label="Gray Model")
+        plt.axvline(self.dev_ave_cc, ymin=-1, ymax=1, color="lightcoral", linestyle="--", label="CC Average")
+        plt.axvline(self.dev_ave_gm, ymin=-1, ymax=1, color="lightskyblue", linestyle="--", label="GM Average")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Deviation")
+        plt.title("Project Finish Time Advance Distribution")
+        # plt.savefig("./figure/advance.png")
+        plt.show()
 
 
 if __name__ == '__main__':
-    s = SimulatorMultiple(15, 200)
+    s = SimulatorMultiple(15, 10000)
     s.simulate()
     s.show()
