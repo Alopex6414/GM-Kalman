@@ -75,10 +75,20 @@ class SimulatorMultiple(SimulatorSingle):
         self.std_gm = None
         self.dev_cc = np.empty(shape=(0, 0))
         self.dev_gm = np.empty(shape=(0, 0))
+        self.bc_cc = np.empty(shape=(0, 0))
+        self.bc_gm = np.empty(shape=(0, 0))
         self.dist_cc = dict()
         self.dist_gm = dict()
         self.eva_cc = dict()
         self.eva_gm = dict()
+        self.adv_cc = dict()
+        self.adv_gm = dict()
+        self.buf_cc = dict()
+        self.buf_gm = dict()
+        self.dev_ave_cc = None
+        self.dev_ave_gm = None
+        self.buf_ave_cc = None
+        self.buf_ave_gm = None
 
         super(SimulatorMultiple, self).__init__(period)
 
@@ -91,6 +101,8 @@ class SimulatorMultiple(SimulatorSingle):
             self.arr_gm = np.append(self.arr_gm, self.time_gm)
             self.dev_cc = np.append(self.dev_cc, (self.time_cc - self.time_expect) / self.time_expect)
             self.dev_gm = np.append(self.dev_gm, (self.time_gm - self.time_expect) / self.time_expect)
+            self.bc_cc = np.append(self.bc_cc, (self.time_cc - self.time_expect))
+            self.bc_gm = np.append(self.bc_gm, (self.time_gm - self.time_expect))
         # calculate evaluation index
         self.ave_ex = self.time_expect
         self.ave_cc = np.mean(self.arr_cc)
@@ -111,6 +123,34 @@ class SimulatorMultiple(SimulatorSingle):
         self.eva_cc["on_schedule"] = np.sum(self.arr_cc <= self.time_expect)
         self.eva_gm["overdue"] = np.sum(self.arr_gm > self.time_expect)
         self.eva_gm["on_schedule"] = np.sum(self.arr_gm <= self.time_expect)
+        # advance evaluation
+        self.dev_ave_cc = np.mean(self.dev_cc)
+        self.dev_ave_gm = np.mean(self.dev_gm)
+        keys = np.unique(self.dev_cc)
+        for k in keys:
+            v = self.dev_cc[self.dev_cc == k].size
+            self.adv_cc[k] = v
+        keys = np.unique(self.dev_gm)
+        for k in keys:
+            v = self.dev_gm[self.dev_gm == k].size
+            self.adv_gm[k] = v
+        # buffer cost evaluation
+        for i in range(self.number):
+            if self.bc_cc[i] < 0:
+                self.bc_cc[i] = 0
+        for i in range(self.number):
+            if self.bc_gm[i] < 0:
+                self.bc_gm[i] = 0
+        self.buf_ave_cc = np.mean(self.bc_cc)
+        self.buf_ave_gm = np.mean(self.bc_gm)
+        keys = np.unique(self.bc_cc)
+        for k in keys:
+            v = self.bc_cc[self.bc_cc == k].size
+            self.buf_cc[k] = v
+        keys = np.unique(self.bc_gm)
+        for k in keys:
+            v = self.bc_gm[self.bc_gm == k].size
+            self.buf_gm[k] = v
         print("hello")
 
     def show(self):
@@ -174,9 +214,39 @@ class SimulatorMultiple(SimulatorSingle):
         plt.title("Project Finish Time Deviation Distribution")
         # plt.savefig("./figure/deviation.png")
         plt.show()
+        # subplot6 line(Finish Time Advance Distribution)
+        plt.figure()
+        plt.plot(self.adv_cc.keys(), self.adv_cc.values(), color="lightcoral", marker="o", linestyle="--",
+                 label="Critical Chain")
+        plt.plot(self.adv_gm.keys(), self.adv_gm.values(), color="lightskyblue", marker="o", linestyle="--",
+                 label="Gray Model")
+        plt.axvline(self.dev_ave_cc, ymin=-1, ymax=1, color="lightcoral", linestyle="--", label="CC Average")
+        plt.axvline(self.dev_ave_gm, ymin=-1, ymax=1, color="lightskyblue", linestyle="--", label="GM Average")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Deviation")
+        plt.title("Project Finish Time Advance Distribution")
+        # plt.savefig("./figure/advance.png")
+        plt.show()
+        # subplot7 line(Finish Buffer Cost Distribution)
+        plt.figure()
+        plt.plot(self.buf_cc.keys(), self.buf_cc.values(), color="orange", marker="o", linestyle="--",
+                 label="Critical Chain")
+        plt.plot(self.buf_gm.keys(), self.buf_gm.values(), color="lightgreen", marker="o", linestyle="--",
+                 label="Gray Model")
+        plt.axvline(self.buf_ave_cc, ymin=-1, ymax=1, color="orange", linestyle="--", label="CC Average")
+        plt.axvline(self.buf_ave_gm, ymin=-1, ymax=1, color="lightgreen", linestyle="--", label="GM Average")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Buffer")
+        plt.ylabel("Number")
+        plt.title("Project Finish Buffer Cost Distribution")
+        # plt.savefig("./figure/buffer.png")
+        plt.show()
 
 
 if __name__ == '__main__':
-    s = SimulatorMultiple(15, 200)
+    s = SimulatorMultiple(15, 10000)
     s.simulate()
     s.show()
