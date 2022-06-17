@@ -129,6 +129,45 @@ class GM(object):
         # error check for predict sequence
         self._error_check()
 
+    def gray_predict2(self):
+        """Use latest 5 times data to calculate GM prediction result"""
+        # pre-condition before ratio check
+        self.D0 = self.D0 + 1
+        # ratio check for origin sequence
+        b, n = self._ratio_check()
+        """
+        if not b:
+            print("Ratio check not pass: array[{}]".format(n))
+            return
+        """
+        # sequence cumulative generation
+        self.D1 = np.cumsum(self.D0)
+        for i in range(1, len(self.D0)):
+            self.Z1[i] = (self.D1[i] + self.D1[i - 1]) / 2
+        self.Z1 = self.Z1[1:len(self.Z1)]
+        # construct data matrix B
+        B = np.array([-self.Z1[-4:], np.ones(4)])
+        # construct result matrix Y
+        Y = np.transpose(np.array([self.D0[-4:]]))
+        # calculate coefficient matrix C
+        self.c = np.dot(np.dot(np.linalg.inv(np.dot(B, B.T)), B), Y)
+        self.c = np.transpose(self.c)
+        self.a = self.c[0, 0]
+        self.b = self.c[0, 1]
+        # predictive curve fitting
+        for i in range(0, len(self.array[0])):
+            self.F[i] = (self.D0[-4] - self.b / self.a) / np.exp(self.a * i) + self.b / self.a
+        # restore the original prediction array
+        self.G[0] = self.F[0]
+        for i in range(1, len(self.array[0])):
+            self.G[i] = self.F[i] - self.F[i - 1]
+        # restore pre-condition
+        self.G[0] = self.G[1]
+        self.G = self.G - 1
+        self.D0 = self.D0 - 1
+        # error check for predict sequence
+        self._error_check()
+
 
 class GMControl(GM):
     X = None
