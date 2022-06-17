@@ -162,7 +162,7 @@ class GM(object):
         for i in range(1, len(self.array[0])):
             self.G[i] = self.F[i] - self.F[i - 1]
         # restore pre-condition
-        # self.G[0] = self.D0[0]
+        self.G[0] = self.G[1]
         self.G = self.G - 1
         self.D0 = self.D0 - 1
         # error check for predict sequence
