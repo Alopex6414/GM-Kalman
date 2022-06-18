@@ -56,8 +56,8 @@ if __name__ == '__main__':
         gm = GM(kf.X, i)
         gm.gray_predict2()
         plt.plot(gm.G, 'cx--')
-        # gmc = GMControl(kf.X, i, t)
-        # gmc.gray_predict()
+        gmc = GMControl(kf.X, i, t)
+        gmc.gray_predict2()
 
     plt.plot(GMControl.X[0, :], 'mx--')
     print("progress(control):", GMControl.X[0])
