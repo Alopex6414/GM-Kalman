@@ -35,9 +35,9 @@ class SimulatorSingle(object):
         # GM predict
         for i in range(5, len(self.kalman.X[0])):
             self.gm = GM(self.kalman.X, i)
-            self.gm.gray_predict()
+            self.gm.gray_predict2()
             self.gmc = GMControl(self.kalman.X, i, self.period)
-            self.gmc.gray_predict()
+            self.gmc.gray_predict2()
         # calculate project finish time...
         # critical chain finish time
         b = False
