@@ -181,6 +181,7 @@ class GMControl(GM):
         """
         super(GMControl, self).__init__(array, buffer, n)
         self.t = t
+        self.t_safe = t + buffer
 
     @staticmethod
     def setup_array(array):
@@ -191,11 +192,27 @@ class GMControl(GM):
         # whether prediction will have delay?
         if len(self.D0) < self.t:
             if self.G[self.t] < 1.:
-                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[self.t])
+                # check active predict with buffer
+                index = -1
+                if self.t_safe < len(self.G):
+                    index = self.t_safe
+                # control progress...
+                if self.G[index] < 1.:
+                    GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[self.t])
+                else:
+                    GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[self.t])
                 # print(len(self.D0))
         else:
             if self.G[-1] < 1.:
-                GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[-1])
+                # check active predict with buffer
+                index = -1
+                if self.t_safe < len(self.G):
+                    index = self.t_safe
+                # control progress...
+                if self.G[index] < 1.:
+                    GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[-1])
+                else:
+                    GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[-1])
                 # print(len(self.D0))
         # update current progress
         GMControl.X[0, len(self.D0)] = GMControl.X[0, len(self.D0) - 1] + GMControl.X[1, len(self.D0) - 1]
