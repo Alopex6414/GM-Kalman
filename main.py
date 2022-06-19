@@ -20,6 +20,7 @@ if __name__ == '__main__':
     print_hi('PyCharm')
     # generate schedule
     t = 15
+    buffer = 5
     s = Schedule(t)
     s.gen()
     print("progress(original):", s.progress)
@@ -53,10 +54,10 @@ if __name__ == '__main__':
     plt.plot(kf.X[0, :], 'gx--')
     plt.plot(kf.X[1, :], 'yo:')
     for i in range(5, len(kf.X[0])):
-        gm = GM(kf.X, i)
+        gm = GM(kf.X, buffer, i)
         gm.gray_predict2()
         plt.plot(gm.G, 'cx--')
-        gmc = GMControl(kf.X, i, t)
+        gmc = GMControl(kf.X, buffer, i, t)
         gmc.gray_predict2()
 
     plt.plot(GMControl.X[0, :], 'mx--')

@@ -9,12 +9,12 @@ from gm import GM, GMControl
 
 
 class SimulatorSingle(object):
-    def __init__(self, period):
+    def __init__(self, period, buffer):
         """
         :param period: please input schedule period
         """
         self.period = period
-        self.buffer = 0
+        self.buffer = buffer
         self.time_expect = self.period
         self.time_cc = 0
         self.time_gm = 0
@@ -34,9 +34,9 @@ class SimulatorSingle(object):
         GMControl.setup_array(self.kalman.X)
         # GM predict
         for i in range(5, len(self.kalman.X[0])):
-            self.gm = GM(self.kalman.X, i)
+            self.gm = GM(self.kalman.X, self.buffer, i)
             self.gm.gray_predict2()
-            self.gmc = GMControl(self.kalman.X, i, self.period)
+            self.gmc = GMControl(self.kalman.X, self.buffer, i, self.period)
             self.gmc.gray_predict2()
         # calculate project finish time...
         # critical chain finish time
@@ -60,7 +60,7 @@ class SimulatorSingle(object):
 
 
 class SimulatorMultiple(SimulatorSingle):
-    def __init__(self, period, number):
+    def __init__(self, period, buffer, number):
         """
         :param period: please input schedule period
         """
@@ -90,7 +90,7 @@ class SimulatorMultiple(SimulatorSingle):
         self.buf_ave_cc = None
         self.buf_ave_gm = None
 
-        super(SimulatorMultiple, self).__init__(period)
+        super(SimulatorMultiple, self).__init__(period, buffer)
 
     def simulate(self):
         # fill all data
@@ -247,6 +247,6 @@ class SimulatorMultiple(SimulatorSingle):
 
 
 if __name__ == '__main__':
-    s = SimulatorMultiple(15, 10000)
+    s = SimulatorMultiple(15, 5, 10000)
     s.simulate()
     s.show()

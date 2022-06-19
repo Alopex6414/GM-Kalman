@@ -5,12 +5,14 @@ import copy
 
 
 class GM(object):
-    def __init__(self, array, n):
+    def __init__(self, array, buffer, n):
         """
         :param array: project schedule progress status array (numpy array type) (2x2)
+        :param buffer: project schedule progress feeding or project buffer
         :param n: project schedule progress status array actual length
         """
         self.array = array
+        self.buffer = buffer
         self.D0 = self.array[0, 0:n]
         self.D1 = np.zeros(len(self.D0))
         self.Z1 = np.zeros(len(self.D0))
@@ -172,12 +174,12 @@ class GM(object):
 class GMControl(GM):
     X = None
 
-    def __init__(self, array, n, t):
+    def __init__(self, array, buffer, n, t):
         """
         :param array: project schedule progress status array (numpy array type) (2x2)
         :param n: project schedule progress status array actual length
         """
-        super(GMControl, self).__init__(array, n)
+        super(GMControl, self).__init__(array, buffer, n)
         self.t = t
 
     @staticmethod
