@@ -177,7 +177,9 @@ class GMControl(GM):
     def __init__(self, array, buffer, n, t):
         """
         :param array: project schedule progress status array (numpy array type) (2x2)
+        :param buffer: project schedule progress feeding or project buffer
         :param n: project schedule progress status array actual length
+        :param t: project schedule progress periodic
         """
         super(GMControl, self).__init__(array, buffer, n)
         self.t = t
