@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
 import numpy as np
 
 from schedule import Schedule
@@ -73,4 +74,14 @@ if __name__ == '__main__':
     for i in range(len(kalman.X[0])):
         s = StaticPartitionControl(kalman.X, 5, i, period)
         s.static_analysis()
-    print("hello")
+    # subplot line
+    x = np.arange(len(s.array[0]))
+    plt.figure()
+    plt.plot(x, s.array[0], color="lightskyblue", marker="o", linestyle="--", label="Actual Progress")
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel("Time")
+    plt.ylabel("Progress")
+    plt.title("Project Progress Status")
+    # plt.savefig("./figure/deviation.png")
+    plt.show()
