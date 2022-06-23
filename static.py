@@ -60,7 +60,6 @@ class StaticPartitionControl(StaticPartition):
         else:
             StaticPartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                              "delta": self.delta, "status": "R"}})
-        print(result)
 
 
 if __name__ == '__main__':
@@ -74,10 +73,30 @@ if __name__ == '__main__':
     for i in range(len(kalman.X[0])):
         s = StaticPartitionControl(kalman.X, 5, i, period)
         s.static_analysis()
+    # static safe buffer
+    green = np.zeros(len(kalman.X[0]))
+    yellow = np.zeros(len(kalman.X[0]))
+    red = np.zeros(len(kalman.X[0]))
+    for i in range(len(kalman.X[0])):
+        # green buffer
+        green[i] = i * 1. / (s.period + s.green)
+        if green[i] > 1.:
+            green[i] = 1.
+        # yellow buffer
+        yellow[i] = i * 1. / (s.period + s.yellow)
+        if yellow[i] > 1.:
+            yellow[i] = 1.
+        # red buffer
+        red[i] = i * 1. / (s.period + s.red)
+        if red[i] > 1.:
+            red[i] = 1.
     # subplot line
     x = np.arange(len(s.array[0]))
     plt.figure()
     plt.plot(x, s.array[0], color="lightskyblue", marker="o", linestyle="--", label="Actual Progress")
+    plt.plot(x, green, color="lightgreen", marker="o", linestyle="--", label="Green Buffer")
+    plt.plot(x, yellow, color="orange", marker="o", linestyle="--", label="Yellow Buffer")
+    plt.plot(x, red, color="lightcoral", marker="o", linestyle="--", label="Red Buffer")
     plt.legend()
     plt.grid(True)
     plt.xlabel("Time")
