@@ -27,7 +27,7 @@ class RelativePartition(object):
         self.red = self.buffer
         self.status = dict()
 
-    def static_analysis(self):
+    def relative_analysis(self):
         buf_size = self.actual - self.real
         if buf_size < self.green:
             result = 0
@@ -54,6 +54,36 @@ class RelativePartitionControl(RelativePartition):
     @staticmethod
     def setup_array(array):
         RelativePartitionControl.X = copy.deepcopy(array)
+
+    def relative_analysis(self):
+        result = super(RelativePartitionControl, self).relative_analysis()
+        if result == 0:
+            RelativePartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+                                                                               "delta": self.delta, "status": "G"}})
+        elif result == 1:
+            RelativePartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+                                                                               "delta": self.delta, "status": "Y"}})
+        else:
+            RelativePartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+                                                                               "delta": self.delta, "status": "R"}})
+
+    def relative_control(self):
+        result = super(RelativePartitionControl, self).relative_analysis()
+        # project buffer consume result
+        if result == 0:
+            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual]
+        elif result == 1:
+            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + 0.05 * \
+                                                         (1. - self.array[0, self.actual])
+        else:
+            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + 0.075 * \
+                                                         (1. - self.array[0, self.actual])
+        # update current progress
+        if self.actual > 0:
+            RelativePartitionControl.X[0, self.actual] = RelativePartitionControl.X[0, self.actual - 1] + \
+                                                         RelativePartitionControl.X[1, self.actual]
+        if RelativePartitionControl.X[0, self.actual] > 1.:
+            RelativePartitionControl.X[0, self.actual] = 1.
 
 
 if __name__ == '__main__':
