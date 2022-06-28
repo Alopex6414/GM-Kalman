@@ -74,10 +74,10 @@ class StaticPartitionControl(StaticPartition):
             StaticPartitionControl.X[1, self.actual] = StaticPartitionControl.X[1, self.actual]
         elif result == 1:
             StaticPartitionControl.X[1, self.actual] = StaticPartitionControl.X[1, self.actual] + \
-                                                       0.05 * (1. - self.array[0, self.actual])
+                                                       0.025 * (1. - self.array[0, self.actual])
         else:
             StaticPartitionControl.X[1, self.actual] = StaticPartitionControl.X[1, self.actual] + \
-                                                       0.075 * (1. - self.array[0, self.actual])
+                                                       0.05 * (1. - self.array[0, self.actual])
         # update current progress
         if self.actual > 0:
             StaticPartitionControl.X[0, self.actual] = StaticPartitionControl.X[0, self.actual - 1] + \

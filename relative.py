@@ -86,11 +86,11 @@ class RelativePartitionControl(RelativePartition):
         if result == 0:
             RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual]
         elif result == 1:
-            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + 0.05 * \
-                                                         (1. - self.array[0, self.actual])
+            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + \
+                                                         0.025 * (1. - self.array[0, self.actual])
         else:
-            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + 0.075 * \
-                                                         (1. - self.array[0, self.actual])
+            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + \
+                                                         0.05 * (1. - self.array[0, self.actual])
         # update current progress
         if self.actual > 0:
             RelativePartitionControl.X[0, self.actual] = RelativePartitionControl.X[0, self.actual - 1] + \
