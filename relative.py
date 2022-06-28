@@ -22,8 +22,8 @@ class RelativePartition(object):
         self.actual = n
         self.real = array[0, n] * t
         self.delta = self.actual - self.real
-        self.green = self.buffer * 0.15 + array[0, n] * (0.75 - 0.15)
-        self.yellow = self.buffer * 0.3 + array[0, n] * (0.9 - 0.3)
+        self.green = self.buffer * (0.15 + array[0, n] * (0.75 - 0.15))
+        self.yellow = self.buffer * (0.3 + array[0, n] * (0.9 - 0.3))
         self.red = self.buffer
         self.status = dict()
 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     x = np.arange(len(s.array[0]))
     plt.figure()
     plt.plot(x, s.array[0], color="lightskyblue", marker="o", linestyle="--", label="Actual Progress")
-    plt.plot(x, s.X[0], color="red", marker="o", linestyle="--", label="Control Progress")
+    plt.plot(x, s.X[0], color="slateblue", marker="o", linestyle="--", label="Control Progress")
     plt.plot(x, green, color="lightgreen", marker="o", linestyle="--", label="Green Progress")
     plt.plot(x, yellow, color="orange", marker="o", linestyle="--", label="Yellow Progress")
     plt.plot(x, red, color="lightcoral", marker="o", linestyle="--", label="Red Progress")

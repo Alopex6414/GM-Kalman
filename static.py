@@ -131,7 +131,7 @@ if __name__ == '__main__':
     x = np.arange(len(s.array[0]))
     plt.figure()
     plt.plot(x, s.array[0], color="lightskyblue", marker="o", linestyle="--", label="Actual Progress")
-    plt.plot(x, s.X[0], color="red", marker="o", linestyle="--", label="Control Progress")
+    plt.plot(x, s.X[0], color="lightskyblue", marker="o", linestyle="--", label="Control Progress")
     plt.plot(x, green, color="lightgreen", marker="o", linestyle="--", label="Green Progress")
     plt.plot(x, yellow, color="orange", marker="o", linestyle="--", label="Yellow Progress")
     plt.plot(x, red, color="lightcoral", marker="o", linestyle="--", label="Red Progress")
