@@ -41,6 +41,10 @@ class RelativePartition(object):
 class RelativePartitionControl(RelativePartition):
     Status = dict()
     X = None
+    Green = None
+    Yellow = None
+    Red = None
+    STA = None
 
     def __init__(self, array, buffer, n, t):
         """
@@ -54,6 +58,10 @@ class RelativePartitionControl(RelativePartition):
     @staticmethod
     def setup_array(array):
         RelativePartitionControl.X = copy.deepcopy(array)
+        RelativePartitionControl.Green = np.zeros(len(array[0]))
+        RelativePartitionControl.Yellow = np.zeros(len(array[0]))
+        RelativePartitionControl.Red = np.zeros(len(array[0]))
+        RelativePartitionControl.STA = np.zeros(len(array[0]))
 
     def relative_analysis(self):
         result = super(RelativePartitionControl, self).relative_analysis()
@@ -69,6 +77,11 @@ class RelativePartitionControl(RelativePartition):
 
     def relative_control(self):
         result = super(RelativePartitionControl, self).relative_analysis()
+        # calculate buffer size
+        RelativePartitionControl.Green[self.actual] = s.green
+        RelativePartitionControl.Yellow[self.actual] = s.yellow
+        RelativePartitionControl.Red[self.actual] = s.red
+        RelativePartitionControl.STA[self.actual] = s.Status.get("{}".format(i))["delta"]
         # project buffer consume result
         if result == 0:
             RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual]
@@ -106,27 +119,17 @@ if __name__ == '__main__':
     red = np.zeros(len(kalman.X[0]))
     for i in range(len(kalman.X[0])):
         # green buffer
-        green[i] = i * 1. / (s.period + s.green)
+        green[i] = i * 1. / (s.period + s.Green[i])
         if green[i] > 1.:
             green[i] = 1.
         # yellow buffer
-        yellow[i] = i * 1. / (s.period + s.yellow)
+        yellow[i] = i * 1. / (s.period + s.Yellow[i])
         if yellow[i] > 1.:
             yellow[i] = 1.
         # red buffer
-        red[i] = i * 1. / (s.period + s.red)
+        red[i] = i * 1. / (s.period + s.Red[i])
         if red[i] > 1.:
             red[i] = 1.
-    # static safe buffer consume
-    buf_G = np.zeros(len(kalman.X[0]))
-    buf_Y = np.zeros(len(kalman.X[0]))
-    buf_R = np.zeros(len(kalman.X[0]))
-    status = np.zeros(len(kalman.X[0]))
-    for i in range(len(kalman.X[0])):
-        buf_G[i] = s.green
-        buf_Y[i] = s.yellow
-        buf_R[i] = s.red
-        status[i] = s.Status.get("{}".format(i))["delta"]
     # subplot1 line (Progress)
     x = np.arange(len(s.array[0]))
     plt.figure()
@@ -142,12 +145,12 @@ if __name__ == '__main__':
     plt.title("Project Progress Status")
     # plt.savefig("./figure/deviation.png")
     plt.show()
-    # subplot1 line (Buffer Consume)
+    # subplot2 line (Buffer Consume)
     plt.figure()
-    plt.plot(x, status, color="lightskyblue", marker="o", linestyle="--", label="Actual Buffer Consume")
-    plt.plot(x, buf_G, color="lightgreen", marker="o", linestyle="--", label="Green Buffer")
-    plt.plot(x, buf_Y, color="orange", marker="o", linestyle="--", label="Yellow Buffer")
-    plt.plot(x, buf_R, color="lightcoral", marker="o", linestyle="--", label="Red Buffer")
+    plt.plot(x, s.STA, color="lightskyblue", marker="o", linestyle="--", label="Actual Buffer Consume")
+    plt.plot(x, s.Green, color="lightgreen", marker="o", linestyle="--", label="Green Buffer")
+    plt.plot(x, s.Yellow, color="orange", marker="o", linestyle="--", label="Yellow Buffer")
+    plt.plot(x, s.Red, color="lightcoral", marker="o", linestyle="--", label="Red Buffer")
     plt.legend()
     plt.grid(True)
     plt.xlabel("Time")

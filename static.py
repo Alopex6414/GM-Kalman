@@ -142,7 +142,7 @@ if __name__ == '__main__':
     plt.title("Project Progress Status")
     # plt.savefig("./figure/deviation.png")
     plt.show()
-    # subplot1 line (Buffer Consume)
+    # subplot2 line (Buffer Consume)
     plt.figure()
     plt.plot(x, status, color="lightskyblue", marker="o", linestyle="--", label="Actual Buffer Consume")
     plt.plot(x, buf_G, color="lightgreen", marker="o", linestyle="--", label="Green Buffer")
