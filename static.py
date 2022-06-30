@@ -8,7 +8,7 @@ from schedule import Schedule
 from kalman import KalmanFilter
 
 
-class StaticPartition(object):
+class SP(object):
     def __init__(self, array, buffer, n, t):
         """
         :param array: project schedule progress status array (numpy array type) (2x2)
@@ -38,7 +38,7 @@ class StaticPartition(object):
         return result
 
 
-class StaticPartitionControl(StaticPartition):
+class SPControl(SP):
     Status = dict()
     X = None
 
@@ -49,41 +49,41 @@ class StaticPartitionControl(StaticPartition):
         :param n: project schedule progress status array actual length
         :param t: project schedule progress periodic
         """
-        super(StaticPartitionControl, self).__init__(array, buffer, n, t)
+        super(SPControl, self).__init__(array, buffer, n, t)
 
     @staticmethod
     def setup_array(array):
-        StaticPartitionControl.X = copy.deepcopy(array)
+        SPControl.X = copy.deepcopy(array)
 
     def static_analysis(self):
-        result = super(StaticPartitionControl, self).static_analysis()
+        result = super(SPControl, self).static_analysis()
         if result == 0:
-            StaticPartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                              "delta": self.delta, "status": "G"}})
         elif result == 1:
-            StaticPartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                              "delta": self.delta, "status": "Y"}})
         else:
-            StaticPartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                              "delta": self.delta, "status": "R"}})
 
     def static_control(self):
-        result = super(StaticPartitionControl, self).static_analysis()
+        result = super(SPControl, self).static_analysis()
         # project buffer consume result
         if result == 0:
-            StaticPartitionControl.X[1, self.actual] = StaticPartitionControl.X[1, self.actual]
+            SPControl.X[1, self.actual] = SPControl.X[1, self.actual]
         elif result == 1:
-            StaticPartitionControl.X[1, self.actual] = StaticPartitionControl.X[1, self.actual] + \
+            SPControl.X[1, self.actual] = SPControl.X[1, self.actual] + \
                                                        0.025 * (1. - self.array[0, self.actual])
         else:
-            StaticPartitionControl.X[1, self.actual] = StaticPartitionControl.X[1, self.actual] + \
+            SPControl.X[1, self.actual] = SPControl.X[1, self.actual] + \
                                                        0.05 * (1. - self.array[0, self.actual])
         # update current progress
         if self.actual > 0:
-            StaticPartitionControl.X[0, self.actual] = StaticPartitionControl.X[0, self.actual - 1] + \
-                                                       StaticPartitionControl.X[1, self.actual]
-        if StaticPartitionControl.X[0, self.actual] > 1.:
-            StaticPartitionControl.X[0, self.actual] = 1.
+            SPControl.X[0, self.actual] = SPControl.X[0, self.actual - 1] + \
+                                                       SPControl.X[1, self.actual]
+        if SPControl.X[0, self.actual] > 1.:
+            SPControl.X[0, self.actual] = 1.
 
 
 if __name__ == '__main__':
@@ -95,9 +95,9 @@ if __name__ == '__main__':
     kalman = KalmanFilter(schedule.progress, schedule.velocity)
     kalman.filter()
     # setup array
-    StaticPartitionControl.setup_array(kalman.X)
+    SPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
-        s = StaticPartitionControl(kalman.X, 5, i, period)
+        s = SPControl(kalman.X, 5, i, period)
         s.static_analysis()
         s.static_control()
     # static safe buffer progress

@@ -8,7 +8,7 @@ from schedule import Schedule
 from kalman import KalmanFilter
 
 
-class RelativePartition(object):
+class RP(object):
     def __init__(self, array, buffer, n, t):
         """
         :param array: project schedule progress status array (numpy array type) (2x2)
@@ -38,7 +38,7 @@ class RelativePartition(object):
         return result
 
 
-class RelativePartitionControl(RelativePartition):
+class RPControl(RP):
     Status = dict()
     X = None
     Green = None
@@ -53,50 +53,50 @@ class RelativePartitionControl(RelativePartition):
         :param n: project schedule progress status array actual length
         :param t: project schedule progress periodic
         """
-        super(RelativePartitionControl, self).__init__(array, buffer, n, t)
+        super(RPControl, self).__init__(array, buffer, n, t)
 
     @staticmethod
     def setup_array(array):
-        RelativePartitionControl.X = copy.deepcopy(array)
-        RelativePartitionControl.Green = np.zeros(len(array[0]))
-        RelativePartitionControl.Yellow = np.zeros(len(array[0]))
-        RelativePartitionControl.Red = np.zeros(len(array[0]))
-        RelativePartitionControl.STA = np.zeros(len(array[0]))
+        RPControl.X = copy.deepcopy(array)
+        RPControl.Green = np.zeros(len(array[0]))
+        RPControl.Yellow = np.zeros(len(array[0]))
+        RPControl.Red = np.zeros(len(array[0]))
+        RPControl.STA = np.zeros(len(array[0]))
 
     def relative_analysis(self):
-        result = super(RelativePartitionControl, self).relative_analysis()
+        result = super(RPControl, self).relative_analysis()
         if result == 0:
-            RelativePartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            RPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                                "delta": self.delta, "status": "G"}})
         elif result == 1:
-            RelativePartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            RPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                                "delta": self.delta, "status": "Y"}})
         else:
-            RelativePartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            RPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                                "delta": self.delta, "status": "R"}})
 
     def relative_control(self):
-        result = super(RelativePartitionControl, self).relative_analysis()
+        result = super(RPControl, self).relative_analysis()
         # calculate buffer size
-        RelativePartitionControl.Green[self.actual] = s.green
-        RelativePartitionControl.Yellow[self.actual] = s.yellow
-        RelativePartitionControl.Red[self.actual] = s.red
-        RelativePartitionControl.STA[self.actual] = s.Status.get("{}".format(i))["delta"]
+        RPControl.Green[self.actual] = s.green
+        RPControl.Yellow[self.actual] = s.yellow
+        RPControl.Red[self.actual] = s.red
+        RPControl.STA[self.actual] = s.Status.get("{}".format(i))["delta"]
         # project buffer consume result
         if result == 0:
-            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual]
+            RPControl.X[1, self.actual] = RPControl.X[1, self.actual]
         elif result == 1:
-            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + \
+            RPControl.X[1, self.actual] = RPControl.X[1, self.actual] + \
                                                          0.025 * (1. - self.array[0, self.actual])
         else:
-            RelativePartitionControl.X[1, self.actual] = RelativePartitionControl.X[1, self.actual] + \
+            RPControl.X[1, self.actual] = RPControl.X[1, self.actual] + \
                                                          0.05 * (1. - self.array[0, self.actual])
         # update current progress
         if self.actual > 0:
-            RelativePartitionControl.X[0, self.actual] = RelativePartitionControl.X[0, self.actual - 1] + \
-                                                         RelativePartitionControl.X[1, self.actual]
-        if RelativePartitionControl.X[0, self.actual] > 1.:
-            RelativePartitionControl.X[0, self.actual] = 1.
+            RPControl.X[0, self.actual] = RPControl.X[0, self.actual - 1] + \
+                                                         RPControl.X[1, self.actual]
+        if RPControl.X[0, self.actual] > 1.:
+            RPControl.X[0, self.actual] = 1.
 
 
 if __name__ == '__main__':
@@ -108,9 +108,9 @@ if __name__ == '__main__':
     kalman = KalmanFilter(schedule.progress, schedule.velocity)
     kalman.filter()
     # setup array
-    RelativePartitionControl.setup_array(kalman.X)
+    RPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
-        s = RelativePartitionControl(kalman.X, 5, i, period)
+        s = RPControl(kalman.X, 5, i, period)
         s.relative_analysis()
         s.relative_control()
     # static safe buffer progress

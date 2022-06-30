@@ -8,7 +8,7 @@ from schedule import Schedule
 from kalman import KalmanFilter
 
 
-class DynamicPartition(object):
+class DP(object):
     def __init__(self, array, buffer, n, t):
         """
         :param array: project schedule progress status array (numpy array type) (2x2)
@@ -38,7 +38,7 @@ class DynamicPartition(object):
         return result
 
 
-class DynamicPartitionControl(DynamicPartition):
+class DPControl(DP):
     Status = dict()
     X = None
     Green = None
@@ -53,50 +53,50 @@ class DynamicPartitionControl(DynamicPartition):
         :param n: project schedule progress status array actual length
         :param t: project schedule progress periodic
         """
-        super(DynamicPartitionControl, self).__init__(array, buffer, n, t)
+        super(DPControl, self).__init__(array, buffer, n, t)
 
     @staticmethod
     def setup_array(array):
-        DynamicPartitionControl.X = copy.deepcopy(array)
-        DynamicPartitionControl.Green = np.zeros(len(array[0]))
-        DynamicPartitionControl.Yellow = np.zeros(len(array[0]))
-        DynamicPartitionControl.Red = np.zeros(len(array[0]))
-        DynamicPartitionControl.STA = np.zeros(len(array[0]))
+        DPControl.X = copy.deepcopy(array)
+        DPControl.Green = np.zeros(len(array[0]))
+        DPControl.Yellow = np.zeros(len(array[0]))
+        DPControl.Red = np.zeros(len(array[0]))
+        DPControl.STA = np.zeros(len(array[0]))
 
     def dynamic_analysis(self):
-        result = super(DynamicPartitionControl, self).dynamic_analysis()
+        result = super(DPControl, self).dynamic_analysis()
         if result == 0:
-            DynamicPartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                               "delta": self.delta, "status": "G"}})
         elif result == 1:
-            DynamicPartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                               "delta": self.delta, "status": "Y"}})
         else:
-            DynamicPartitionControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
+            DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                               "delta": self.delta, "status": "R"}})
 
     def dynamic_control(self):
-        result = super(DynamicPartitionControl, self).dynamic_analysis()
+        result = super(DPControl, self).dynamic_analysis()
         # calculate buffer size
-        DynamicPartitionControl.Green[self.actual] = s.green
-        DynamicPartitionControl.Yellow[self.actual] = s.yellow
-        DynamicPartitionControl.Red[self.actual] = s.red
-        DynamicPartitionControl.STA[self.actual] = s.Status.get("{}".format(i))["delta"]
+        DPControl.Green[self.actual] = s.green
+        DPControl.Yellow[self.actual] = s.yellow
+        DPControl.Red[self.actual] = s.red
+        DPControl.STA[self.actual] = s.Status.get("{}".format(i))["delta"]
         # project buffer consume result
         if result == 0:
-            DynamicPartitionControl.X[1, self.actual] = DynamicPartitionControl.X[1, self.actual]
+            DPControl.X[1, self.actual] = DPControl.X[1, self.actual]
         elif result == 1:
-            DynamicPartitionControl.X[1, self.actual] = DynamicPartitionControl.X[1, self.actual] + \
+            DPControl.X[1, self.actual] = DPControl.X[1, self.actual] + \
                                                          0.025 * (1. - self.array[0, self.actual])
         else:
-            DynamicPartitionControl.X[1, self.actual] = DynamicPartitionControl.X[1, self.actual] + \
+            DPControl.X[1, self.actual] = DPControl.X[1, self.actual] + \
                                                          0.05 * (1. - self.array[0, self.actual])
         # update current progress
         if self.actual > 0:
-            DynamicPartitionControl.X[0, self.actual] = DynamicPartitionControl.X[0, self.actual - 1] + \
-                                                         DynamicPartitionControl.X[1, self.actual]
-        if DynamicPartitionControl.X[0, self.actual] > 1.:
-            DynamicPartitionControl.X[0, self.actual] = 1.
+            DPControl.X[0, self.actual] = DPControl.X[0, self.actual - 1] + \
+                                                         DPControl.X[1, self.actual]
+        if DPControl.X[0, self.actual] > 1.:
+            DPControl.X[0, self.actual] = 1.
 
 
 if __name__ == '__main__':
@@ -108,9 +108,9 @@ if __name__ == '__main__':
     kalman = KalmanFilter(schedule.progress, schedule.velocity)
     kalman.filter()
     # setup array
-    DynamicPartitionControl.setup_array(kalman.X)
+    DPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
-        s = DynamicPartitionControl(kalman.X, 5, i, period)
+        s = DPControl(kalman.X, 5, i, period)
         s.dynamic_analysis()
         s.dynamic_control()
     # static safe buffer progress
