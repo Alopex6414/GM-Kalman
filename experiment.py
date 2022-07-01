@@ -6,6 +6,9 @@ import numpy as np
 from schedule import Schedule
 from kalman import KalmanFilter
 from gm import GM, GMControl
+from static import SP, SPControl
+from relative import RP, RPControl
+from dynamic import DP, DPControl
 
 
 class Experiment(object):
@@ -31,6 +34,12 @@ class ExperimentSingle(object):
         self.kalman = None
         self.gm = None
         self.gmc = None
+        self.sp = None
+        self.spc = None
+        self.rp = None
+        self.rpc = None
+        self.dp = None
+        self.dpc = None
 
     def simulate(self):
         # generate schedule
