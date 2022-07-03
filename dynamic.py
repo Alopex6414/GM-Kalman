@@ -77,11 +77,6 @@ class DPControl(DP):
 
     def dynamic_control(self):
         result = super(DPControl, self).dynamic_analysis()
-        # calculate buffer size
-        DPControl.Green[self.actual] = s.green
-        DPControl.Yellow[self.actual] = s.yellow
-        DPControl.Red[self.actual] = s.red
-        DPControl.STA[self.actual] = s.Status.get("{}".format(i))["delta"]
         # project buffer consume result
         if result == 0:
             DPControl.X[1, self.actual] = DPControl.X[1, self.actual]
@@ -111,7 +106,10 @@ if __name__ == '__main__':
     DPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
         s = DPControl(kalman.X, 5, i, period)
-        s.dynamic_analysis()
+        s.Green[i] = s.green
+        s.Yellow[i] = s.yellow
+        s.Red[i] = s.red
+        s.STA[i] = s.Status.get("{}".format(i))["delta"]
         s.dynamic_control()
     # static safe buffer progress
     green = np.zeros(len(kalman.X[0]))

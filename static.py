@@ -98,7 +98,6 @@ if __name__ == '__main__':
     SPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
         s = SPControl(kalman.X, 5, i, period)
-        s.static_analysis()
         s.static_control()
     # static safe buffer progress
     green = np.zeros(len(kalman.X[0]))

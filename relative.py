@@ -77,11 +77,6 @@ class RPControl(RP):
 
     def relative_control(self):
         result = super(RPControl, self).relative_analysis()
-        # calculate buffer size
-        RPControl.Green[self.actual] = s.green
-        RPControl.Yellow[self.actual] = s.yellow
-        RPControl.Red[self.actual] = s.red
-        RPControl.STA[self.actual] = s.Status.get("{}".format(i))["delta"]
         # project buffer consume result
         if result == 0:
             RPControl.X[1, self.actual] = RPControl.X[1, self.actual]
@@ -111,7 +106,10 @@ if __name__ == '__main__':
     RPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
         s = RPControl(kalman.X, 5, i, period)
-        s.relative_analysis()
+        s.Green[i] = s.green
+        s.Yellow[i] = s.yellow
+        s.Red[i] = s.red
+        s.STA[i] = s.Status.get("{}".format(i))["delta"]
         s.relative_control()
     # static safe buffer progress
     green = np.zeros(len(kalman.X[0]))
