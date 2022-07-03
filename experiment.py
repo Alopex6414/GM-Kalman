@@ -110,5 +110,80 @@ class ExperimentSingle(object):
             self.time_dp = len(DPControl.X[0, :])
 
 
+class ExperimentMultiple(ExperimentSingle):
+    def __init__(self, period, buffer, number):
+        """
+        :param period: please input schedule period
+        :param buffer: please input schedule buffer
+        :param number: please input total number
+        """
+        self.number = number
+        # project finish time array
+        self.arr_ex = np.empty(shape=(0, 0))
+        self.arr_cc = np.empty(shape=(0, 0))
+        self.arr_gm = np.empty(shape=(0, 0))
+        self.arr_sp = np.empty(shape=(0, 0))
+        self.arr_rp = np.empty(shape=(0, 0))
+        self.arr_dp = np.empty(shape=(0, 0))
+        # project finish time statistic
+        self.dist_cc = dict()
+        self.dist_gm = dict()
+        self.dist_sp = dict()
+        self.dist_rp = dict()
+        self.dist_dp = dict()
+        super(ExperimentMultiple, self).__init__(period, buffer)
+
+    def simulate(self):
+        # collect all data
+        for i in range(0, self.number):
+            super(ExperimentMultiple, self).simulate()
+            self.arr_ex = np.append(self.arr_ex, self.time_expect)
+            self.arr_cc = np.append(self.arr_cc, self.time_cc)
+            self.arr_gm = np.append(self.arr_gm, self.time_gm)
+            self.arr_sp = np.append(self.arr_sp, self.time_sp)
+            self.arr_rp = np.append(self.arr_rp, self.time_rp)
+            self.arr_dp = np.append(self.arr_dp, self.time_dp)
+        # statistical evaluation
+        keys = np.unique(self.arr_cc)
+        for k in keys:
+            v = self.arr_cc[self.arr_cc == k].size
+            self.dist_cc[k] = v
+        keys = np.unique(self.arr_gm)
+        for k in keys:
+            v = self.arr_gm[self.arr_gm == k].size
+            self.dist_gm[k] = v
+        keys = np.unique(self.arr_sp)
+        for k in keys:
+            v = self.arr_sp[self.arr_sp == k].size
+            self.dist_sp[k] = v
+        keys = np.unique(self.arr_rp)
+        for k in keys:
+            v = self.arr_rp[self.arr_rp == k].size
+            self.dist_rp[k] = v
+        keys = np.unique(self.arr_dp)
+        for k in keys:
+            v = self.arr_dp[self.arr_dp == k].size
+            self.dist_dp[k] = v
+
+    def show(self):
+        # plot preparation
+        x = np.arange(self.number)
+        # subplot1 bar (Project Finish Time Distribution Statistic)
+        plt.figure()
+        plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral", label="Critical Chain")
+        plt.plot(self.dist_gm.keys(), self.dist_gm.values(), marker="o", linestyle="--", color="lightskyblue", label="Gray Model")
+        plt.plot(self.dist_sp.keys(), self.dist_sp.values(), marker="o", linestyle="--", color="orange", label="Static Partition")
+        plt.plot(self.dist_rp.keys(), self.dist_rp.values(), marker="o", linestyle="--", color="lightgreen", label="Relative Partition")
+        plt.plot(self.dist_dp.keys(), self.dist_dp.values(), marker="o", linestyle="--", color="violet", label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Number")
+        plt.title("Project Finish Time Distribution Statistic")
+        plt.show()
+
+
 if __name__ == '__main__':
-    pass
+    s = ExperimentMultiple(15, 5, 10000)
+    s.simulate()
+    s.show()
