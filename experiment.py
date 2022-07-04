@@ -125,12 +125,18 @@ class ExperimentMultiple(ExperimentSingle):
         self.arr_sp = np.empty(shape=(0, 0))
         self.arr_rp = np.empty(shape=(0, 0))
         self.arr_dp = np.empty(shape=(0, 0))
-        # project finish time statistic
+        # statistic distribution
         self.dist_cc = dict()
         self.dist_gm = dict()
         self.dist_sp = dict()
         self.dist_rp = dict()
         self.dist_dp = dict()
+        # on schedule & overdue
+        self.dist_over_cc = dict()
+        self.dist_over_gm = dict()
+        self.dist_over_sp = dict()
+        self.dist_over_rp = dict()
+        self.dist_over_dp = dict()
         super(ExperimentMultiple, self).__init__(period, buffer)
 
     def simulate(self):
@@ -164,26 +170,89 @@ class ExperimentMultiple(ExperimentSingle):
         for k in keys:
             v = self.arr_dp[self.arr_dp == k].size
             self.dist_dp[k] = v
+        # on schedule & overdue
+        self.dist_over_cc["overdue"] = np.sum(self.arr_cc > self.time_expect + self.buffer)
+        self.dist_over_cc["on_schedule"] = np.sum(self.arr_cc <= self.time_expect)
+        self.dist_over_cc["in_buffer"] = len(self.arr_cc) - self.dist_over_cc["overdue"] - self.dist_over_cc[
+            "on_schedule"]
+        self.dist_over_gm["overdue"] = np.sum(self.arr_gm > self.time_expect + self.buffer)
+        self.dist_over_gm["on_schedule"] = np.sum(self.arr_gm <= self.time_expect)
+        self.dist_over_gm["in_buffer"] = len(self.arr_gm) - self.dist_over_gm["overdue"] - self.dist_over_gm[
+            "on_schedule"]
+        self.dist_over_sp["overdue"] = np.sum(self.arr_sp > self.time_expect + self.buffer)
+        self.dist_over_sp["on_schedule"] = np.sum(self.arr_sp <= self.time_expect)
+        self.dist_over_sp["in_buffer"] = len(self.arr_sp) - self.dist_over_sp["overdue"] - self.dist_over_sp[
+            "on_schedule"]
+        self.dist_over_rp["overdue"] = np.sum(self.arr_rp > self.time_expect + self.buffer)
+        self.dist_over_rp["on_schedule"] = np.sum(self.arr_rp <= self.time_expect)
+        self.dist_over_rp["in_buffer"] = len(self.arr_rp) - self.dist_over_rp["overdue"] - self.dist_over_rp[
+            "on_schedule"]
+        self.dist_over_dp["overdue"] = np.sum(self.arr_dp > self.time_expect + self.buffer)
+        self.dist_over_dp["on_schedule"] = np.sum(self.arr_dp <= self.time_expect)
+        self.dist_over_dp["in_buffer"] = len(self.arr_dp) - self.dist_over_dp["overdue"] - self.dist_over_dp[
+            "on_schedule"]
 
     def show(self):
         # plot preparation
         x = np.arange(self.number)
         # subplot1 bar (Project Finish Time Distribution Statistic)
         plt.figure()
-        plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral", label="Critical Chain")
-        plt.plot(self.dist_gm.keys(), self.dist_gm.values(), marker="o", linestyle="--", color="lightskyblue", label="Gray Model")
-        plt.plot(self.dist_sp.keys(), self.dist_sp.values(), marker="o", linestyle="--", color="orange", label="Static Partition")
-        plt.plot(self.dist_rp.keys(), self.dist_rp.values(), marker="o", linestyle="--", color="lightgreen", label="Relative Partition")
-        plt.plot(self.dist_dp.keys(), self.dist_dp.values(), marker="o", linestyle="--", color="violet", label="Dynamic Partition")
+        plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral",
+                 label="Critical Chain")
+        plt.plot(self.dist_gm.keys(), self.dist_gm.values(), marker="o", linestyle="--", color="lightskyblue",
+                 label="Gray Model")
+        plt.plot(self.dist_sp.keys(), self.dist_sp.values(), marker="o", linestyle="--", color="orange",
+                 label="Static Partition")
+        plt.plot(self.dist_rp.keys(), self.dist_rp.values(), marker="o", linestyle="--", color="lightgreen",
+                 label="Relative Partition")
+        plt.plot(self.dist_dp.keys(), self.dist_dp.values(), marker="o", linestyle="--", color="violet",
+                 label="Dynamic Partition")
         plt.legend()
         plt.grid(True)
         plt.xlabel("Time")
         plt.ylabel("Number")
         plt.title("Project Finish Time Distribution Statistic")
         plt.show()
+        # subplot4 bar(Finish Time Overdue & On Schedule)
+        plt.figure()
+        plt.bar("CC", self.dist_over_cc.get("on_schedule"), width=0.4, color="lightgreen")
+        plt.bar("CC", self.dist_over_cc.get("in_buffer"), bottom=self.dist_over_cc.get("on_schedule"), width=0.4,
+                color="lightyellow")
+        plt.bar("CC", self.dist_over_cc.get("overdue"),
+                bottom=self.dist_over_cc.get("on_schedule") + self.dist_over_cc.get("in_buffer"), width=0.4,
+                color="lightcoral")
+        plt.bar("GM", self.dist_over_gm.get("on_schedule"), width=0.4, color="lightgreen")
+        plt.bar("GM", self.dist_over_gm.get("in_buffer"), bottom=self.dist_over_gm.get("on_schedule"), width=0.4,
+                color="lightyellow")
+        plt.bar("GM", self.dist_over_gm.get("overdue"),
+                bottom=self.dist_over_gm.get("on_schedule") + self.dist_over_gm.get("in_buffer"), width=0.4,
+                color="lightcoral")
+        plt.bar("SP", self.dist_over_sp.get("on_schedule"), width=0.4, color="lightgreen")
+        plt.bar("SP", self.dist_over_sp.get("in_buffer"), bottom=self.dist_over_sp.get("on_schedule"), width=0.4,
+                color="lightyellow")
+        plt.bar("SP", self.dist_over_sp.get("overdue"),
+                bottom=self.dist_over_sp.get("on_schedule") + self.dist_over_sp.get("in_buffer"), width=0.4,
+                color="lightcoral")
+        plt.bar("RP", self.dist_over_rp.get("on_schedule"), width=0.4, color="lightgreen")
+        plt.bar("RP", self.dist_over_rp.get("in_buffer"), bottom=self.dist_over_rp.get("on_schedule"), width=0.4,
+                color="lightyellow")
+        plt.bar("RP", self.dist_over_rp.get("overdue"),
+                bottom=self.dist_over_rp.get("on_schedule") + self.dist_over_rp.get("in_buffer"), width=0.4,
+                color="lightcoral")
+        plt.bar("DP", self.dist_over_dp.get("on_schedule"), width=0.4, color="lightgreen")
+        plt.bar("DP", self.dist_over_dp.get("in_buffer"), bottom=self.dist_over_dp.get("on_schedule"), width=0.4,
+                color="lightyellow")
+        plt.bar("DP", self.dist_over_dp.get("overdue"),
+                bottom=self.dist_over_dp.get("on_schedule") + self.dist_over_dp.get("in_buffer"), width=0.4,
+                color="lightcoral")
+        plt.grid(True)
+        plt.xlabel("Schedule Management Method")
+        plt.ylabel("Number")
+        plt.title("Project Finish Time Overdue & On Schedule")
+        plt.show()
 
 
 if __name__ == '__main__':
-    s = ExperimentMultiple(15, 5, 10000)
+    s = ExperimentMultiple(15, 3, 10000)
     s.simulate()
     s.show()
