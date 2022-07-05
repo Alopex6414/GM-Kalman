@@ -137,18 +137,36 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_over_sp = dict()
         self.dist_over_rp = dict()
         self.dist_over_dp = dict()
+        # buffer cost
+        self.arr_buf_cc = np.empty(shape=(0, 0))
+        self.arr_buf_gm = np.empty(shape=(0, 0))
+        self.arr_buf_sp = np.empty(shape=(0, 0))
+        self.arr_buf_rp = np.empty(shape=(0, 0))
+        self.arr_buf_dp = np.empty(shape=(0, 0))
+        self.dist_buf_cc = dict()
+        self.dist_buf_gm = dict()
+        self.dist_buf_sp = dict()
+        self.dist_buf_rp = dict()
+        self.dist_buf_dp = dict()
         super(ExperimentMultiple, self).__init__(period, buffer)
 
     def simulate(self):
         # collect all data
         for i in range(0, self.number):
             super(ExperimentMultiple, self).simulate()
+            # statistic distribution
             self.arr_ex = np.append(self.arr_ex, self.time_expect)
             self.arr_cc = np.append(self.arr_cc, self.time_cc)
             self.arr_gm = np.append(self.arr_gm, self.time_gm)
             self.arr_sp = np.append(self.arr_sp, self.time_sp)
             self.arr_rp = np.append(self.arr_rp, self.time_rp)
             self.arr_dp = np.append(self.arr_dp, self.time_dp)
+            # buffer cost
+            self.arr_buf_cc = np.append(self.arr_buf_cc, (self.time_cc - self.time_expect))
+            self.arr_buf_gm = np.append(self.arr_buf_gm, (self.time_gm - self.time_expect))
+            self.arr_buf_sp = np.append(self.arr_buf_sp, (self.time_sp - self.time_expect))
+            self.arr_buf_rp = np.append(self.arr_buf_rp, (self.time_rp - self.time_expect))
+            self.arr_buf_dp = np.append(self.arr_buf_dp, (self.time_dp - self.time_expect))
         # statistical evaluation
         keys = np.unique(self.arr_cc)
         for k in keys:
@@ -191,11 +209,47 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_over_dp["on_schedule"] = np.sum(self.arr_dp <= self.time_expect)
         self.dist_over_dp["in_buffer"] = len(self.arr_dp) - self.dist_over_dp["overdue"] - self.dist_over_dp[
             "on_schedule"]
+        # buffer cost evaluation
+        for i in range(self.number):
+            if self.arr_buf_cc[i] < 0:
+                self.arr_buf_cc[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_gm[i] < 0:
+                self.arr_buf_gm[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_sp[i] < 0:
+                self.arr_buf_sp[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_rp[i] < 0:
+                self.arr_buf_rp[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_dp[i] < 0:
+                self.arr_buf_dp[i] = 0
+        keys = np.unique(self.arr_buf_cc)
+        for k in keys:
+            v = self.arr_buf_cc[self.arr_buf_cc == k].size
+            self.dist_buf_cc[k] = v
+        keys = np.unique(self.arr_buf_gm)
+        for k in keys:
+            v = self.arr_buf_gm[self.arr_buf_gm == k].size
+            self.dist_buf_gm[k] = v
+        keys = np.unique(self.arr_buf_sp)
+        for k in keys:
+            v = self.arr_buf_sp[self.arr_buf_sp == k].size
+            self.dist_buf_sp[k] = v
+        keys = np.unique(self.arr_buf_rp)
+        for k in keys:
+            v = self.arr_buf_rp[self.arr_buf_rp == k].size
+            self.dist_buf_rp[k] = v
+        keys = np.unique(self.arr_buf_dp)
+        for k in keys:
+            v = self.arr_buf_dp[self.arr_buf_dp == k].size
+            self.dist_buf_dp[k] = v
 
     def show(self):
         # plot preparation
         x = np.arange(self.number)
-        # subplot1 bar (Project Finish Time Distribution Statistic)
+        # subplot1 bar (Project Finish Time Statistic Distribution)
         plt.figure()
         plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral",
                  label="Critical Chain")
@@ -211,9 +265,9 @@ class ExperimentMultiple(ExperimentSingle):
         plt.grid(True)
         plt.xlabel("Time")
         plt.ylabel("Number")
-        plt.title("Project Finish Time Distribution Statistic")
+        plt.title("Project Finish Time Statistic Distribution")
         plt.show()
-        # subplot4 bar(Finish Time Overdue & On Schedule)
+        # subplot2 bar(Finish Time Overdue & On Schedule)
         plt.figure()
         plt.bar("CC", self.dist_over_cc.get("on_schedule"), width=0.4, color="lightgreen")
         plt.bar("CC", self.dist_over_cc.get("in_buffer"), bottom=self.dist_over_cc.get("on_schedule"), width=0.4,
@@ -248,7 +302,25 @@ class ExperimentMultiple(ExperimentSingle):
         plt.grid(True)
         plt.xlabel("Schedule Management Method")
         plt.ylabel("Number")
-        plt.title("Project Finish Time Overdue & On Schedule")
+        plt.title("Project Finish Time On Schedule & Overdue")
+        plt.show()
+        # subplot3 line(Finish Buffer Cost Distribution)
+        plt.figure()
+        plt.plot(self.dist_buf_cc.keys(), self.dist_buf_cc.values(), color="lightcoral", marker="o", linestyle="--",
+                 label="Critical Chain")
+        plt.plot(self.dist_buf_gm.keys(), self.dist_buf_gm.values(), color="lightskyblue", marker="o", linestyle="--",
+                 label="Gray Model")
+        plt.plot(self.dist_buf_sp.keys(), self.dist_buf_sp.values(), color="orange", marker="o", linestyle="--",
+                 label="Static Partition")
+        plt.plot(self.dist_buf_rp.keys(), self.dist_buf_rp.values(), color="lightgreen", marker="o", linestyle="--",
+                 label="Relative Partition")
+        plt.plot(self.dist_buf_dp.keys(), self.dist_buf_dp.values(), color="violet", marker="o", linestyle="--",
+                 label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Buffer")
+        plt.ylabel("Number")
+        plt.title("Project Finish Time Buffer Cost")
         plt.show()
 
 
