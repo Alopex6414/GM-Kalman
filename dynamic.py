@@ -67,13 +67,16 @@ class DPControl(DP):
         result = super(DPControl, self).dynamic_analysis()
         if result == 0:
             DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                              "delta": self.delta, "status": "G"}})
+                                                                "delta": self.delta, "status": "G", "risk": "low",
+                                                                "control": "0"}})
         elif result == 1:
             DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                              "delta": self.delta, "status": "Y"}})
+                                                                "delta": self.delta, "status": "Y", "risk": "medium",
+                                                                "control": "0"}})
         else:
             DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                              "delta": self.delta, "status": "R"}})
+                                                                "delta": self.delta, "status": "R", "risk": "high",
+                                                                "control": "1"}})
 
     def dynamic_control(self):
         result = super(DPControl, self).dynamic_analysis()

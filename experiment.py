@@ -52,8 +52,6 @@ class ExperimentSingle(object):
         DPControl.setup_array(self.kalman.X)
         # GM/SP/RP/DP predict
         for i in range(5, len(self.kalman.X[0])):
-            self.gm = GM(self.kalman.X, self.buffer, i)
-            self.gm.gray_predict2()
             self.gmc = GMControl(self.kalman.X, self.buffer, i, self.period)
             self.gmc.gray_predict2()
             self.spc = SPControl(self.kalman.X, self.buffer, i, self.period)
