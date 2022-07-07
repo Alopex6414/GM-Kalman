@@ -39,8 +39,9 @@ class RP(object):
 
 
 class RPControl(RP):
-    Status = dict()
     X = None
+    Count = 0
+    Status = dict()
     Green = None
     Yellow = None
     Red = None
@@ -58,6 +59,8 @@ class RPControl(RP):
     @staticmethod
     def setup_array(array):
         RPControl.X = copy.deepcopy(array)
+        RPControl.Count = 0
+        RPControl.Status = dict()
         RPControl.Green = np.zeros(len(array[0]))
         RPControl.Yellow = np.zeros(len(array[0]))
         RPControl.Red = np.zeros(len(array[0]))
@@ -86,9 +89,11 @@ class RPControl(RP):
         elif result == 1:
             RPControl.X[1, self.actual] = RPControl.X[1, self.actual] + \
                                                          0.025 * (1. - self.array[0, self.actual])
+            RPControl.Count = RPControl.Count + 1
         else:
             RPControl.X[1, self.actual] = RPControl.X[1, self.actual] + \
                                                          0.05 * (1. - self.array[0, self.actual])
+            RPControl.Count = RPControl.Count + 1
         # update current progress
         if self.actual > 0:
             RPControl.X[0, self.actual] = RPControl.X[0, self.actual - 1] + \

@@ -39,8 +39,9 @@ class DP(object):
 
 
 class DPControl(DP):
-    Status = dict()
     X = None
+    Count = 0
+    Status = dict()
     Green = None
     Yellow = None
     Red = None
@@ -58,6 +59,8 @@ class DPControl(DP):
     @staticmethod
     def setup_array(array):
         DPControl.X = copy.deepcopy(array)
+        DPControl.Count = 0
+        DPControl.Status = dict()
         DPControl.Green = np.zeros(len(array[0]))
         DPControl.Yellow = np.zeros(len(array[0]))
         DPControl.Red = np.zeros(len(array[0]))
@@ -86,9 +89,11 @@ class DPControl(DP):
         elif result == 1:
             DPControl.X[1, self.actual] = DPControl.X[1, self.actual] + \
                                                          0.025 * (1. - self.array[0, self.actual])
+            DPControl.Count = DPControl.Count + 1
         else:
             DPControl.X[1, self.actual] = DPControl.X[1, self.actual] + \
                                                          0.05 * (1. - self.array[0, self.actual])
+            DPControl.Count = DPControl.Count + 1
         # update current progress
         if self.actual > 0:
             DPControl.X[0, self.actual] = DPControl.X[0, self.actual - 1] + \

@@ -39,8 +39,9 @@ class SP(object):
 
 
 class SPControl(SP):
-    Status = dict()
     X = None
+    Count = 0
+    Status = dict()
 
     def __init__(self, array, buffer, n, t):
         """
@@ -54,6 +55,8 @@ class SPControl(SP):
     @staticmethod
     def setup_array(array):
         SPControl.X = copy.deepcopy(array)
+        SPControl.Count = 0
+        SPControl.Status = dict()
 
     def static_analysis(self):
         result = super(SPControl, self).static_analysis()
@@ -78,9 +81,11 @@ class SPControl(SP):
         elif result == 1:
             SPControl.X[1, self.actual] = SPControl.X[1, self.actual] + \
                                                        0.025 * (1. - self.array[0, self.actual])
+            SPControl.Count = SPControl.Count + 1
         else:
             SPControl.X[1, self.actual] = SPControl.X[1, self.actual] + \
                                                        0.05 * (1. - self.array[0, self.actual])
+            SPControl.Count = SPControl.Count + 1
         # update current progress
         if self.actual > 0:
             SPControl.X[0, self.actual] = SPControl.X[0, self.actual - 1] + \

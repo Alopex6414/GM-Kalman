@@ -146,6 +146,15 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_buf_sp = dict()
         self.dist_buf_rp = dict()
         self.dist_buf_dp = dict()
+        # control frequency
+        self.arr_ctrl_gm = np.empty(shape=(0, 0))
+        self.arr_ctrl_sp = np.empty(shape=(0, 0))
+        self.arr_ctrl_rp = np.empty(shape=(0, 0))
+        self.arr_ctrl_dp = np.empty(shape=(0, 0))
+        self.dist_ctrl_gm = dict()
+        self.dist_ctrl_sp = dict()
+        self.dist_ctrl_rp = dict()
+        self.dist_ctrl_dp = dict()
         super(ExperimentMultiple, self).__init__(period, buffer)
 
     def simulate(self):
@@ -165,6 +174,15 @@ class ExperimentMultiple(ExperimentSingle):
             self.arr_buf_sp = np.append(self.arr_buf_sp, (self.time_sp - self.time_expect))
             self.arr_buf_rp = np.append(self.arr_buf_rp, (self.time_rp - self.time_expect))
             self.arr_buf_dp = np.append(self.arr_buf_dp, (self.time_dp - self.time_expect))
+            # control frequency
+            if GMControl.Count != 0:
+                self.arr_ctrl_gm = np.append(self.arr_ctrl_gm, GMControl.Count)
+            if SPControl.Count != 0:
+                self.arr_ctrl_sp = np.append(self.arr_ctrl_sp, SPControl.Count)
+            if RPControl.Count != 0:
+                self.arr_ctrl_rp = np.append(self.arr_ctrl_rp, RPControl.Count)
+            if DPControl.Count != 0:
+                self.arr_ctrl_dp = np.append(self.arr_ctrl_dp, DPControl.Count)
         # statistical evaluation
         keys = np.unique(self.arr_cc)
         for k in keys:
@@ -243,11 +261,28 @@ class ExperimentMultiple(ExperimentSingle):
         for k in keys:
             v = self.arr_buf_dp[self.arr_buf_dp == k].size
             self.dist_buf_dp[k] = v
+        # control frequency evaluation
+        keys = np.unique(self.arr_ctrl_gm)
+        for k in keys:
+            v = self.arr_ctrl_gm[self.arr_ctrl_gm == k].size
+            self.dist_ctrl_gm[k] = v
+        keys = np.unique(self.arr_ctrl_sp)
+        for k in keys:
+            v = self.arr_ctrl_sp[self.arr_ctrl_sp == k].size
+            self.dist_ctrl_sp[k] = v
+        keys = np.unique(self.arr_ctrl_rp)
+        for k in keys:
+            v = self.arr_ctrl_rp[self.arr_ctrl_rp == k].size
+            self.dist_ctrl_rp[k] = v
+        keys = np.unique(self.arr_ctrl_dp)
+        for k in keys:
+            v = self.arr_ctrl_dp[self.arr_ctrl_dp == k].size
+            self.dist_ctrl_dp[k] = v
 
     def show(self):
         # plot preparation
         x = np.arange(self.number)
-        # subplot1 bar (Project Finish Time Statistic Distribution)
+        # subplot1 line (Project Finish Time Statistic Distribution)
         plt.figure()
         plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral",
                  label="Critical Chain")
@@ -319,6 +354,22 @@ class ExperimentMultiple(ExperimentSingle):
         plt.xlabel("Buffer")
         plt.ylabel("Number")
         plt.title("Project Finish Time Buffer Cost")
+        plt.show()
+        # subplot4 line (Project Control Frequency Statistic Distribution)
+        plt.figure()
+        plt.plot(self.dist_ctrl_gm.keys(), self.dist_ctrl_gm.values(), marker="o", linestyle="--", color="lightskyblue",
+                 label="Gray Model")
+        plt.plot(self.dist_ctrl_sp.keys(), self.dist_ctrl_sp.values(), marker="o", linestyle="--", color="orange",
+                 label="Static Partition")
+        plt.plot(self.dist_ctrl_rp.keys(), self.dist_ctrl_rp.values(), marker="o", linestyle="--", color="lightgreen",
+                 label="Relative Partition")
+        plt.plot(self.dist_ctrl_dp.keys(), self.dist_ctrl_dp.values(), marker="o", linestyle="--", color="violet",
+                 label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Number")
+        plt.title("Project Control Frequency Statistic Distribution")
         plt.show()
 
 
