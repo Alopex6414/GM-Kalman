@@ -5,10 +5,10 @@ import numpy as np
 
 from schedule import Schedule
 from kalman import KalmanFilter
-from gm import GM, GMControl
-from static import SP, SPControl
-from relative import RP, RPControl
-from dynamic import DP, DPControl
+from gm import GMControl
+from static import SPControl
+from relative import RPControl
+from dynamic import DPControl
 
 
 class Experiment(object):
@@ -155,6 +155,11 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_ctrl_sp = dict()
         self.dist_ctrl_rp = dict()
         self.dist_ctrl_dp = dict()
+        # buffer colors count
+        self.dist_color_gm = dict({"R": 0, "Y": 0, "G": 0})
+        self.dist_color_sp = dict({"R": 0, "Y": 0, "G": 0})
+        self.dist_color_rp = dict({"R": 0, "Y": 0, "G": 0})
+        self.dist_color_dp = dict({"R": 0, "Y": 0, "G": 0})
         super(ExperimentMultiple, self).__init__(period, buffer)
 
     def simulate(self):
@@ -175,14 +180,39 @@ class ExperimentMultiple(ExperimentSingle):
             self.arr_buf_rp = np.append(self.arr_buf_rp, (self.time_rp - self.time_expect))
             self.arr_buf_dp = np.append(self.arr_buf_dp, (self.time_dp - self.time_expect))
             # control frequency
-            if GMControl.Count != 0:
-                self.arr_ctrl_gm = np.append(self.arr_ctrl_gm, GMControl.Count)
-            if SPControl.Count != 0:
-                self.arr_ctrl_sp = np.append(self.arr_ctrl_sp, SPControl.Count)
-            if RPControl.Count != 0:
-                self.arr_ctrl_rp = np.append(self.arr_ctrl_rp, RPControl.Count)
-            if DPControl.Count != 0:
-                self.arr_ctrl_dp = np.append(self.arr_ctrl_dp, DPControl.Count)
+            self.arr_ctrl_gm = np.append(self.arr_ctrl_gm, GMControl.Count)
+            self.arr_ctrl_sp = np.append(self.arr_ctrl_sp, SPControl.Count)
+            self.arr_ctrl_rp = np.append(self.arr_ctrl_rp, RPControl.Count)
+            self.arr_ctrl_dp = np.append(self.arr_ctrl_dp, DPControl.Count)
+            # buffer colors count
+            for k, v in GMControl.Status.items():
+                if v["status"] == "R":
+                    self.dist_color_gm["R"] = self.dist_color_gm["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_gm["Y"] = self.dist_color_gm["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_gm["G"] = self.dist_color_gm["G"] + 1
+            for k, v in SPControl.Status.items():
+                if v["status"] == "R":
+                    self.dist_color_sp["R"] = self.dist_color_sp["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_sp["Y"] = self.dist_color_sp["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_sp["G"] = self.dist_color_sp["G"] + 1
+            for k, v in RPControl.Status.items():
+                if v["status"] == "R":
+                    self.dist_color_rp["R"] = self.dist_color_rp["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_rp["Y"] = self.dist_color_rp["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_rp["G"] = self.dist_color_rp["G"] + 1
+            for k, v in DPControl.Status.items():
+                if v["status"] == "R":
+                    self.dist_color_dp["R"] = self.dist_color_dp["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_dp["Y"] = self.dist_color_dp["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_dp["G"] = self.dist_color_dp["G"] + 1
         # statistical evaluation
         keys = np.unique(self.arr_cc)
         for k in keys:
@@ -280,8 +310,6 @@ class ExperimentMultiple(ExperimentSingle):
             self.dist_ctrl_dp[k] = v
 
     def show(self):
-        # plot preparation
-        x = np.arange(self.number)
         # subplot1 line (Project Finish Time Statistic Distribution)
         plt.figure()
         plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral",
@@ -370,6 +398,28 @@ class ExperimentMultiple(ExperimentSingle):
         plt.xlabel("Time")
         plt.ylabel("Number")
         plt.title("Project Control Frequency Statistic Distribution")
+        plt.show()
+        # subplot5 bar(Project Buffer Colors Count Distribution)
+        fig, ax = plt.subplots()
+        labels = ["GM", "SP", "RP", "DP"]
+        reds = [self.dist_color_gm.get("R"), self.dist_color_sp.get("R"), self.dist_color_rp.get("R"),
+                self.dist_color_dp.get("R")]
+        yellows = [self.dist_color_gm.get("Y"), self.dist_color_sp.get("Y"), self.dist_color_rp.get("Y"),
+                   self.dist_color_dp.get("Y")]
+        greens = [self.dist_color_gm.get("G"), self.dist_color_sp.get("G"), self.dist_color_rp.get("G"),
+                  self.dist_color_dp.get("G")]
+        x = np.arange(len(labels))
+        width = 0.3
+        ax.bar(x - width, reds, width=width, color="lightcoral")
+        ax.bar(x, yellows, width=width, color="lightyellow")
+        ax.bar(x + width, greens, width=width, color="lightgreen")
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels)
+        plt.grid(True)
+        plt.xlabel("Schedule Management Method")
+        plt.ylabel("Number")
+        plt.title("Project Buffer Colors Count Distribution")
+        # plt.savefig("./figure/overdue.png")
         plt.show()
 
 

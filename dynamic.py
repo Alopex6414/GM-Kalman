@@ -80,9 +80,10 @@ class DPControl(DP):
             DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "R", "risk": "high",
                                                                 "control": "1"}})
+        return result
 
     def dynamic_control(self):
-        result = super(DPControl, self).dynamic_analysis()
+        result = self.dynamic_analysis()
         # project buffer consume result
         if result == 0:
             DPControl.X[1, self.actual] = DPControl.X[1, self.actual]

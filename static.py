@@ -72,9 +72,10 @@ class SPControl(SP):
             SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "R", "risk": "high",
                                                                 "control": "1"}})
+        return result
 
     def static_control(self):
-        result = super(SPControl, self).static_analysis()
+        result = self.static_analysis()
         # project buffer consume result
         if result == 0:
             SPControl.X[1, self.actual] = SPControl.X[1, self.actual]

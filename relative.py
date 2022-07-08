@@ -80,9 +80,10 @@ class RPControl(RP):
             RPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "R", "risk": "high",
                                                                 "control": "1"}})
+        return result
 
     def relative_control(self):
-        result = super(RPControl, self).relative_analysis()
+        result = self.relative_analysis()
         # project buffer consume result
         if result == 0:
             RPControl.X[1, self.actual] = RPControl.X[1, self.actual]
