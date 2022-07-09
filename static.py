@@ -63,15 +63,15 @@ class SPControl(SP):
         if result == 0:
             SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "G", "risk": "low",
-                                                                "control": "0"}})
+                                                                "control": 0}})
         elif result == 1:
             SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "Y", "risk": "medium",
-                                                                "control": "0"}})
+                                                                "control": 1}})
         else:
             SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "R", "risk": "high",
-                                                                "control": "1"}})
+                                                                "control": 1}})
         return result
 
     def static_control(self):

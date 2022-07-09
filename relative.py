@@ -71,15 +71,15 @@ class RPControl(RP):
         if result == 0:
             RPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "G", "risk": "low",
-                                                                "control": "0"}})
+                                                                "control": 0}})
         elif result == 1:
             RPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "Y", "risk": "medium",
-                                                                "control": "0"}})
+                                                                "control": 1}})
         else:
             RPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
                                                                 "delta": self.delta, "status": "R", "risk": "high",
-                                                                "control": "1"}})
+                                                                "control": 1}})
         return result
 
     def relative_control(self):

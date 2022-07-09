@@ -160,6 +160,15 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_color_sp = dict({"R": 0, "Y": 0, "G": 0})
         self.dist_color_rp = dict({"R": 0, "Y": 0, "G": 0})
         self.dist_color_dp = dict({"R": 0, "Y": 0, "G": 0})
+        # discovery deviation time
+        self.arr_dev_gm = np.empty(shape=(0, 0))
+        self.arr_dev_sp = np.empty(shape=(0, 0))
+        self.arr_dev_rp = np.empty(shape=(0, 0))
+        self.arr_dev_dp = np.empty(shape=(0, 0))
+        self.dist_dev_gm = dict()
+        self.dist_dev_sp = dict()
+        self.dist_dev_rp = dict()
+        self.dist_dev_dp = dict()
         super(ExperimentMultiple, self).__init__(period, buffer)
 
     def simulate(self):
@@ -185,28 +194,44 @@ class ExperimentMultiple(ExperimentSingle):
             self.arr_ctrl_rp = np.append(self.arr_ctrl_rp, RPControl.Count)
             self.arr_ctrl_dp = np.append(self.arr_ctrl_dp, DPControl.Count)
             # buffer colors count
+            b_dev_gm = False
             for k, v in GMControl.Status.items():
+                if not b_dev_gm and v["control"] == 1:
+                    b_dev_gm = True
+                    self.arr_dev_gm = np.append(self.arr_dev_gm, int(k))
                 if v["status"] == "R":
                     self.dist_color_gm["R"] = self.dist_color_gm["R"] + 1
                 if v["status"] == "Y":
                     self.dist_color_gm["Y"] = self.dist_color_gm["Y"] + 1
                 if v["status"] == "G":
                     self.dist_color_gm["G"] = self.dist_color_gm["G"] + 1
+            b_dev_sp = False
             for k, v in SPControl.Status.items():
+                if not b_dev_sp and v["control"] == 1:
+                    b_dev_sp = True
+                    self.arr_dev_sp = np.append(self.arr_dev_sp, int(k))
                 if v["status"] == "R":
                     self.dist_color_sp["R"] = self.dist_color_sp["R"] + 1
                 if v["status"] == "Y":
                     self.dist_color_sp["Y"] = self.dist_color_sp["Y"] + 1
                 if v["status"] == "G":
                     self.dist_color_sp["G"] = self.dist_color_sp["G"] + 1
+            b_dev_rp = False
             for k, v in RPControl.Status.items():
+                if not b_dev_rp and v["control"] == 1:
+                    b_dev_rp = True
+                    self.arr_dev_rp = np.append(self.arr_dev_rp, int(k))
                 if v["status"] == "R":
                     self.dist_color_rp["R"] = self.dist_color_rp["R"] + 1
                 if v["status"] == "Y":
                     self.dist_color_rp["Y"] = self.dist_color_rp["Y"] + 1
                 if v["status"] == "G":
                     self.dist_color_rp["G"] = self.dist_color_rp["G"] + 1
+            b_dev_dp = False
             for k, v in DPControl.Status.items():
+                if not b_dev_dp and v["control"] == 1:
+                    b_dev_dp = True
+                    self.arr_dev_dp = np.append(self.arr_dev_dp, int(k))
                 if v["status"] == "R":
                     self.dist_color_dp["R"] = self.dist_color_dp["R"] + 1
                 if v["status"] == "Y":
@@ -308,6 +333,23 @@ class ExperimentMultiple(ExperimentSingle):
         for k in keys:
             v = self.arr_ctrl_dp[self.arr_ctrl_dp == k].size
             self.dist_ctrl_dp[k] = v
+        # discovery deviation time
+        keys = np.unique(self.arr_dev_gm)
+        for k in keys:
+            v = self.arr_dev_gm[self.arr_dev_gm == k].size
+            self.dist_dev_gm[k] = v
+        keys = np.unique(self.arr_dev_sp)
+        for k in keys:
+            v = self.arr_dev_sp[self.arr_dev_sp == k].size
+            self.dist_dev_sp[k] = v
+        keys = np.unique(self.arr_dev_rp)
+        for k in keys:
+            v = self.arr_dev_rp[self.arr_dev_rp == k].size
+            self.dist_dev_rp[k] = v
+        keys = np.unique(self.arr_dev_dp)
+        for k in keys:
+            v = self.arr_dev_dp[self.arr_dev_dp == k].size
+            self.dist_dev_dp[k] = v
 
     def show(self):
         # subplot1 line (Project Finish Time Statistic Distribution)
@@ -420,6 +462,22 @@ class ExperimentMultiple(ExperimentSingle):
         plt.ylabel("Number")
         plt.title("Project Buffer Colors Count Distribution")
         # plt.savefig("./figure/overdue.png")
+        plt.show()
+        # subplot6 line (Project Discovery Deviation Time Distribution)
+        plt.figure()
+        plt.plot(self.dist_dev_gm.keys(), self.dist_dev_gm.values(), marker="o", linestyle="--", color="lightskyblue",
+                 label="Gray Model")
+        plt.plot(self.dist_dev_sp.keys(), self.dist_dev_sp.values(), marker="o", linestyle="--", color="orange",
+                 label="Static Partition")
+        plt.plot(self.dist_dev_rp.keys(), self.dist_dev_rp.values(), marker="o", linestyle="--", color="lightgreen",
+                 label="Relative Partition")
+        plt.plot(self.dist_dev_dp.keys(), self.dist_dev_dp.values(), marker="o", linestyle="--", color="violet",
+                 label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Number")
+        plt.title("Project Discovery Deviation Time Distribution")
         plt.show()
 
 
