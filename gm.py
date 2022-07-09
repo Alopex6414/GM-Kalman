@@ -205,11 +205,13 @@ class GMControl(GM):
                 # control progress...
                 if self.G[index] < 1.:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[self.t])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
                 else:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[self.t])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
             else:
                 GMControl.Status.update({"{}".format(len(self.D0)): {"status": "G", "risk": "low", "control": "0"}})
@@ -222,11 +224,13 @@ class GMControl(GM):
                 # control progress...
                 if self.G[index] < 1.:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[-1])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
                 else:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[-1])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
             else:
                 GMControl.Status.update({"{}".format(len(self.D0)): {"status": "G", "risk": "low", "control": "0"}})
@@ -247,11 +251,13 @@ class GMControl(GM):
                 # control progress...
                 if self.G[index] < 1.:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[self.t])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
                 else:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[self.t])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
             else:
                 GMControl.Status.update({"{}".format(len(self.D0)): {"status": "G", "risk": "low", "control": "0"}})
@@ -264,11 +270,13 @@ class GMControl(GM):
                 # control progress...
                 if self.G[index] < 1.:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[-1])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
                 else:
                     GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[-1])
-                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
+                    GMControl.Status.update(
+                        {"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": "1"}})
                     GMControl.Count = GMControl.Count + 1
             else:
                 GMControl.Status.update({"{}".format(len(self.D0)): {"status": "G", "risk": "low", "control": "0"}})
