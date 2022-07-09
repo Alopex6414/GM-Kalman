@@ -39,8 +39,9 @@ class SP(object):
 
 
 class SPControl(SP):
-    Status = dict()
     X = None
+    Count = 0
+    Status = dict()
 
     def __init__(self, array, buffer, n, t):
         """
@@ -54,30 +55,38 @@ class SPControl(SP):
     @staticmethod
     def setup_array(array):
         SPControl.X = copy.deepcopy(array)
+        SPControl.Count = 0
+        SPControl.Status = dict()
 
     def static_analysis(self):
         result = super(SPControl, self).static_analysis()
         if result == 0:
             SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                             "delta": self.delta, "status": "G"}})
+                                                                "delta": self.delta, "status": "G", "risk": "low",
+                                                                "control": 0}})
         elif result == 1:
             SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                             "delta": self.delta, "status": "Y"}})
+                                                                "delta": self.delta, "status": "Y", "risk": "medium",
+                                                                "control": 1}})
         else:
             SPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                             "delta": self.delta, "status": "R"}})
+                                                                "delta": self.delta, "status": "R", "risk": "high",
+                                                                "control": 1}})
+        return result
 
     def static_control(self):
-        result = super(SPControl, self).static_analysis()
+        result = self.static_analysis()
         # project buffer consume result
         if result == 0:
             SPControl.X[1, self.actual] = SPControl.X[1, self.actual]
         elif result == 1:
             SPControl.X[1, self.actual] = SPControl.X[1, self.actual] + \
                                                        0.025 * (1. - self.array[0, self.actual])
+            SPControl.Count = SPControl.Count + 1
         else:
             SPControl.X[1, self.actual] = SPControl.X[1, self.actual] + \
                                                        0.05 * (1. - self.array[0, self.actual])
+            SPControl.Count = SPControl.Count + 1
         # update current progress
         if self.actual > 0:
             SPControl.X[0, self.actual] = SPControl.X[0, self.actual - 1] + \

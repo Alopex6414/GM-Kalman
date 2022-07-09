@@ -5,10 +5,10 @@ import numpy as np
 
 from schedule import Schedule
 from kalman import KalmanFilter
-from gm import GM, GMControl
-from static import SP, SPControl
-from relative import RP, RPControl
-from dynamic import DP, DPControl
+from gm import GMControl
+from static import SPControl
+from relative import RPControl
+from dynamic import DPControl
 
 
 class Experiment(object):
@@ -52,8 +52,6 @@ class ExperimentSingle(object):
         DPControl.setup_array(self.kalman.X)
         # GM/SP/RP/DP predict
         for i in range(5, len(self.kalman.X[0])):
-            self.gm = GM(self.kalman.X, self.buffer, i)
-            self.gm.gray_predict2()
             self.gmc = GMControl(self.kalman.X, self.buffer, i, self.period)
             self.gmc.gray_predict2()
             self.spc = SPControl(self.kalman.X, self.buffer, i, self.period)
@@ -137,18 +135,109 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_over_sp = dict()
         self.dist_over_rp = dict()
         self.dist_over_dp = dict()
+        # buffer cost
+        self.arr_buf_cc = np.empty(shape=(0, 0))
+        self.arr_buf_gm = np.empty(shape=(0, 0))
+        self.arr_buf_sp = np.empty(shape=(0, 0))
+        self.arr_buf_rp = np.empty(shape=(0, 0))
+        self.arr_buf_dp = np.empty(shape=(0, 0))
+        self.dist_buf_cc = dict()
+        self.dist_buf_gm = dict()
+        self.dist_buf_sp = dict()
+        self.dist_buf_rp = dict()
+        self.dist_buf_dp = dict()
+        # control frequency
+        self.arr_ctrl_gm = np.empty(shape=(0, 0))
+        self.arr_ctrl_sp = np.empty(shape=(0, 0))
+        self.arr_ctrl_rp = np.empty(shape=(0, 0))
+        self.arr_ctrl_dp = np.empty(shape=(0, 0))
+        self.dist_ctrl_gm = dict()
+        self.dist_ctrl_sp = dict()
+        self.dist_ctrl_rp = dict()
+        self.dist_ctrl_dp = dict()
+        # buffer colors count
+        self.dist_color_gm = dict({"R": 0, "Y": 0, "G": 0})
+        self.dist_color_sp = dict({"R": 0, "Y": 0, "G": 0})
+        self.dist_color_rp = dict({"R": 0, "Y": 0, "G": 0})
+        self.dist_color_dp = dict({"R": 0, "Y": 0, "G": 0})
+        # discovery deviation time
+        self.arr_dev_gm = np.empty(shape=(0, 0))
+        self.arr_dev_sp = np.empty(shape=(0, 0))
+        self.arr_dev_rp = np.empty(shape=(0, 0))
+        self.arr_dev_dp = np.empty(shape=(0, 0))
+        self.dist_dev_gm = dict()
+        self.dist_dev_sp = dict()
+        self.dist_dev_rp = dict()
+        self.dist_dev_dp = dict()
         super(ExperimentMultiple, self).__init__(period, buffer)
 
     def simulate(self):
         # collect all data
         for i in range(0, self.number):
             super(ExperimentMultiple, self).simulate()
+            # statistic distribution
             self.arr_ex = np.append(self.arr_ex, self.time_expect)
             self.arr_cc = np.append(self.arr_cc, self.time_cc)
             self.arr_gm = np.append(self.arr_gm, self.time_gm)
             self.arr_sp = np.append(self.arr_sp, self.time_sp)
             self.arr_rp = np.append(self.arr_rp, self.time_rp)
             self.arr_dp = np.append(self.arr_dp, self.time_dp)
+            # buffer cost
+            self.arr_buf_cc = np.append(self.arr_buf_cc, (self.time_cc - self.time_expect))
+            self.arr_buf_gm = np.append(self.arr_buf_gm, (self.time_gm - self.time_expect))
+            self.arr_buf_sp = np.append(self.arr_buf_sp, (self.time_sp - self.time_expect))
+            self.arr_buf_rp = np.append(self.arr_buf_rp, (self.time_rp - self.time_expect))
+            self.arr_buf_dp = np.append(self.arr_buf_dp, (self.time_dp - self.time_expect))
+            # control frequency
+            self.arr_ctrl_gm = np.append(self.arr_ctrl_gm, GMControl.Count)
+            self.arr_ctrl_sp = np.append(self.arr_ctrl_sp, SPControl.Count)
+            self.arr_ctrl_rp = np.append(self.arr_ctrl_rp, RPControl.Count)
+            self.arr_ctrl_dp = np.append(self.arr_ctrl_dp, DPControl.Count)
+            # buffer colors count
+            b_dev_gm = False
+            for k, v in GMControl.Status.items():
+                if not b_dev_gm and v["control"] == 1:
+                    b_dev_gm = True
+                    self.arr_dev_gm = np.append(self.arr_dev_gm, int(k))
+                if v["status"] == "R":
+                    self.dist_color_gm["R"] = self.dist_color_gm["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_gm["Y"] = self.dist_color_gm["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_gm["G"] = self.dist_color_gm["G"] + 1
+            b_dev_sp = False
+            for k, v in SPControl.Status.items():
+                if not b_dev_sp and v["control"] == 1:
+                    b_dev_sp = True
+                    self.arr_dev_sp = np.append(self.arr_dev_sp, int(k))
+                if v["status"] == "R":
+                    self.dist_color_sp["R"] = self.dist_color_sp["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_sp["Y"] = self.dist_color_sp["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_sp["G"] = self.dist_color_sp["G"] + 1
+            b_dev_rp = False
+            for k, v in RPControl.Status.items():
+                if not b_dev_rp and v["control"] == 1:
+                    b_dev_rp = True
+                    self.arr_dev_rp = np.append(self.arr_dev_rp, int(k))
+                if v["status"] == "R":
+                    self.dist_color_rp["R"] = self.dist_color_rp["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_rp["Y"] = self.dist_color_rp["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_rp["G"] = self.dist_color_rp["G"] + 1
+            b_dev_dp = False
+            for k, v in DPControl.Status.items():
+                if not b_dev_dp and v["control"] == 1:
+                    b_dev_dp = True
+                    self.arr_dev_dp = np.append(self.arr_dev_dp, int(k))
+                if v["status"] == "R":
+                    self.dist_color_dp["R"] = self.dist_color_dp["R"] + 1
+                if v["status"] == "Y":
+                    self.dist_color_dp["Y"] = self.dist_color_dp["Y"] + 1
+                if v["status"] == "G":
+                    self.dist_color_dp["G"] = self.dist_color_dp["G"] + 1
         # statistical evaluation
         keys = np.unique(self.arr_cc)
         for k in keys:
@@ -191,11 +280,79 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_over_dp["on_schedule"] = np.sum(self.arr_dp <= self.time_expect)
         self.dist_over_dp["in_buffer"] = len(self.arr_dp) - self.dist_over_dp["overdue"] - self.dist_over_dp[
             "on_schedule"]
+        # buffer cost evaluation
+        for i in range(self.number):
+            if self.arr_buf_cc[i] < 0:
+                self.arr_buf_cc[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_gm[i] < 0:
+                self.arr_buf_gm[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_sp[i] < 0:
+                self.arr_buf_sp[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_rp[i] < 0:
+                self.arr_buf_rp[i] = 0
+        for i in range(self.number):
+            if self.arr_buf_dp[i] < 0:
+                self.arr_buf_dp[i] = 0
+        keys = np.unique(self.arr_buf_cc)
+        for k in keys:
+            v = self.arr_buf_cc[self.arr_buf_cc == k].size
+            self.dist_buf_cc[k] = v
+        keys = np.unique(self.arr_buf_gm)
+        for k in keys:
+            v = self.arr_buf_gm[self.arr_buf_gm == k].size
+            self.dist_buf_gm[k] = v
+        keys = np.unique(self.arr_buf_sp)
+        for k in keys:
+            v = self.arr_buf_sp[self.arr_buf_sp == k].size
+            self.dist_buf_sp[k] = v
+        keys = np.unique(self.arr_buf_rp)
+        for k in keys:
+            v = self.arr_buf_rp[self.arr_buf_rp == k].size
+            self.dist_buf_rp[k] = v
+        keys = np.unique(self.arr_buf_dp)
+        for k in keys:
+            v = self.arr_buf_dp[self.arr_buf_dp == k].size
+            self.dist_buf_dp[k] = v
+        # control frequency evaluation
+        keys = np.unique(self.arr_ctrl_gm)
+        for k in keys:
+            v = self.arr_ctrl_gm[self.arr_ctrl_gm == k].size
+            self.dist_ctrl_gm[k] = v
+        keys = np.unique(self.arr_ctrl_sp)
+        for k in keys:
+            v = self.arr_ctrl_sp[self.arr_ctrl_sp == k].size
+            self.dist_ctrl_sp[k] = v
+        keys = np.unique(self.arr_ctrl_rp)
+        for k in keys:
+            v = self.arr_ctrl_rp[self.arr_ctrl_rp == k].size
+            self.dist_ctrl_rp[k] = v
+        keys = np.unique(self.arr_ctrl_dp)
+        for k in keys:
+            v = self.arr_ctrl_dp[self.arr_ctrl_dp == k].size
+            self.dist_ctrl_dp[k] = v
+        # discovery deviation time
+        keys = np.unique(self.arr_dev_gm)
+        for k in keys:
+            v = self.arr_dev_gm[self.arr_dev_gm == k].size
+            self.dist_dev_gm[k] = v
+        keys = np.unique(self.arr_dev_sp)
+        for k in keys:
+            v = self.arr_dev_sp[self.arr_dev_sp == k].size
+            self.dist_dev_sp[k] = v
+        keys = np.unique(self.arr_dev_rp)
+        for k in keys:
+            v = self.arr_dev_rp[self.arr_dev_rp == k].size
+            self.dist_dev_rp[k] = v
+        keys = np.unique(self.arr_dev_dp)
+        for k in keys:
+            v = self.arr_dev_dp[self.arr_dev_dp == k].size
+            self.dist_dev_dp[k] = v
 
     def show(self):
-        # plot preparation
-        x = np.arange(self.number)
-        # subplot1 bar (Project Finish Time Distribution Statistic)
+        # subplot1 line (Project Finish Time Statistic Distribution)
         plt.figure()
         plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral",
                  label="Critical Chain")
@@ -211,9 +368,9 @@ class ExperimentMultiple(ExperimentSingle):
         plt.grid(True)
         plt.xlabel("Time")
         plt.ylabel("Number")
-        plt.title("Project Finish Time Distribution Statistic")
+        plt.title("Project Finish Time Statistic Distribution")
         plt.show()
-        # subplot4 bar(Finish Time Overdue & On Schedule)
+        # subplot2 bar(Finish Time Overdue & On Schedule)
         plt.figure()
         plt.bar("CC", self.dist_over_cc.get("on_schedule"), width=0.4, color="lightgreen")
         plt.bar("CC", self.dist_over_cc.get("in_buffer"), bottom=self.dist_over_cc.get("on_schedule"), width=0.4,
@@ -248,7 +405,79 @@ class ExperimentMultiple(ExperimentSingle):
         plt.grid(True)
         plt.xlabel("Schedule Management Method")
         plt.ylabel("Number")
-        plt.title("Project Finish Time Overdue & On Schedule")
+        plt.title("Project Finish Time On Schedule & Overdue")
+        plt.show()
+        # subplot3 line(Finish Buffer Cost Distribution)
+        plt.figure()
+        plt.plot(self.dist_buf_cc.keys(), self.dist_buf_cc.values(), color="lightcoral", marker="o", linestyle="--",
+                 label="Critical Chain")
+        plt.plot(self.dist_buf_gm.keys(), self.dist_buf_gm.values(), color="lightskyblue", marker="o", linestyle="--",
+                 label="Gray Model")
+        plt.plot(self.dist_buf_sp.keys(), self.dist_buf_sp.values(), color="orange", marker="o", linestyle="--",
+                 label="Static Partition")
+        plt.plot(self.dist_buf_rp.keys(), self.dist_buf_rp.values(), color="lightgreen", marker="o", linestyle="--",
+                 label="Relative Partition")
+        plt.plot(self.dist_buf_dp.keys(), self.dist_buf_dp.values(), color="violet", marker="o", linestyle="--",
+                 label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Buffer")
+        plt.ylabel("Number")
+        plt.title("Project Finish Time Buffer Cost")
+        plt.show()
+        # subplot4 line (Project Control Frequency Statistic Distribution)
+        plt.figure()
+        plt.plot(self.dist_ctrl_gm.keys(), self.dist_ctrl_gm.values(), marker="o", linestyle="--", color="lightskyblue",
+                 label="Gray Model")
+        plt.plot(self.dist_ctrl_sp.keys(), self.dist_ctrl_sp.values(), marker="o", linestyle="--", color="orange",
+                 label="Static Partition")
+        plt.plot(self.dist_ctrl_rp.keys(), self.dist_ctrl_rp.values(), marker="o", linestyle="--", color="lightgreen",
+                 label="Relative Partition")
+        plt.plot(self.dist_ctrl_dp.keys(), self.dist_ctrl_dp.values(), marker="o", linestyle="--", color="violet",
+                 label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Number")
+        plt.title("Project Control Frequency Statistic Distribution")
+        plt.show()
+        # subplot5 bar(Project Buffer Colors Count Distribution)
+        fig, ax = plt.subplots()
+        labels = ["GM", "SP", "RP", "DP"]
+        reds = [self.dist_color_gm.get("R"), self.dist_color_sp.get("R"), self.dist_color_rp.get("R"),
+                self.dist_color_dp.get("R")]
+        yellows = [self.dist_color_gm.get("Y"), self.dist_color_sp.get("Y"), self.dist_color_rp.get("Y"),
+                   self.dist_color_dp.get("Y")]
+        greens = [self.dist_color_gm.get("G"), self.dist_color_sp.get("G"), self.dist_color_rp.get("G"),
+                  self.dist_color_dp.get("G")]
+        x = np.arange(len(labels))
+        width = 0.3
+        ax.bar(x - width, reds, width=width, color="lightcoral")
+        ax.bar(x, yellows, width=width, color="lightyellow")
+        ax.bar(x + width, greens, width=width, color="lightgreen")
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels)
+        plt.grid(True)
+        plt.xlabel("Schedule Management Method")
+        plt.ylabel("Number")
+        plt.title("Project Buffer Colors Count Distribution")
+        # plt.savefig("./figure/overdue.png")
+        plt.show()
+        # subplot6 line (Project Discovery Deviation Time Distribution)
+        plt.figure()
+        plt.plot(self.dist_dev_gm.keys(), self.dist_dev_gm.values(), marker="o", linestyle="--", color="lightskyblue",
+                 label="Gray Model")
+        plt.plot(self.dist_dev_sp.keys(), self.dist_dev_sp.values(), marker="o", linestyle="--", color="orange",
+                 label="Static Partition")
+        plt.plot(self.dist_dev_rp.keys(), self.dist_dev_rp.values(), marker="o", linestyle="--", color="lightgreen",
+                 label="Relative Partition")
+        plt.plot(self.dist_dev_dp.keys(), self.dist_dev_dp.values(), marker="o", linestyle="--", color="violet",
+                 label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.ylabel("Number")
+        plt.title("Project Discovery Deviation Time Distribution")
         plt.show()
 
 

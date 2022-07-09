@@ -39,8 +39,9 @@ class DP(object):
 
 
 class DPControl(DP):
-    Status = dict()
     X = None
+    Count = 0
+    Status = dict()
     Green = None
     Yellow = None
     Red = None
@@ -58,6 +59,8 @@ class DPControl(DP):
     @staticmethod
     def setup_array(array):
         DPControl.X = copy.deepcopy(array)
+        DPControl.Count = 0
+        DPControl.Status = dict()
         DPControl.Green = np.zeros(len(array[0]))
         DPControl.Yellow = np.zeros(len(array[0]))
         DPControl.Red = np.zeros(len(array[0]))
@@ -67,25 +70,31 @@ class DPControl(DP):
         result = super(DPControl, self).dynamic_analysis()
         if result == 0:
             DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                              "delta": self.delta, "status": "G"}})
+                                                                "delta": self.delta, "status": "G", "risk": "low",
+                                                                "control": 0}})
         elif result == 1:
             DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                              "delta": self.delta, "status": "Y"}})
+                                                                "delta": self.delta, "status": "Y", "risk": "medium",
+                                                                "control": 1}})
         else:
             DPControl.Status.update({"{}".format(self.actual): {"real": self.real, "actual": self.actual,
-                                                                              "delta": self.delta, "status": "R"}})
+                                                                "delta": self.delta, "status": "R", "risk": "high",
+                                                                "control": 1}})
+        return result
 
     def dynamic_control(self):
-        result = super(DPControl, self).dynamic_analysis()
+        result = self.dynamic_analysis()
         # project buffer consume result
         if result == 0:
             DPControl.X[1, self.actual] = DPControl.X[1, self.actual]
         elif result == 1:
             DPControl.X[1, self.actual] = DPControl.X[1, self.actual] + \
                                                          0.025 * (1. - self.array[0, self.actual])
+            DPControl.Count = DPControl.Count + 1
         else:
             DPControl.X[1, self.actual] = DPControl.X[1, self.actual] + \
                                                          0.05 * (1. - self.array[0, self.actual])
+            DPControl.Count = DPControl.Count + 1
         # update current progress
         if self.actual > 0:
             DPControl.X[0, self.actual] = DPControl.X[0, self.actual - 1] + \
