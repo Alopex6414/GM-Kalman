@@ -4,17 +4,21 @@ import numpy as np
 
 
 class Schedule(object):
-    def __init__(self, period):
+    def __init__(self, period, sigma=0.05):
         """
-        :param period: please input schedule period
+        :param period: schedule period(eg. 15d or 20d)
+        :param period: variation coefficient(eg. 0.05)
         """
         self.period = period
-        self.sigma = 0.05
+        self.sigma = sigma
         self.mu = 1 / period
         self.velocity = None
         self.progress = None
 
     def gen(self):
+        """
+        :function: generate random normal distribute project schedule
+        """
         self.velocity = np.random.normal(self.mu, self.sigma, self.period)
         # velocity should not less than zero
         for i in range(0, len(self.velocity)):
