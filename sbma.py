@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from asyncio.windows_events import NULL
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
@@ -19,6 +20,9 @@ class SBMA(object):
     
     def sbma_simulate(self):
         """simulate activities distribution"""
+        # generate schedule
+        schedule = Schedule(self.period)
+        schedule.gen()
         pass
 
 
