@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from asyncio.windows_events import NULL
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
@@ -17,12 +16,24 @@ class SBMA(object):
         self.actual = n
         self.real = array[0, n] * t
         self.delta = self.actual - self.real
+        self.simcount = 100
     
     def sbma_simulate(self):
         """simulate activities distribution"""
-        # generate schedule
-        schedule = Schedule(self.period)
-        schedule.gen()
+        # start simulate project finish time
+        arr_cost = np.empty(shape=(0, 10))
+        for i in range(0, self.simcount):
+            # generate schedule
+            schedule = Schedule(self.period)
+            schedule.gen()
+            # kalman filter
+            kalman = KalmanFilter(schedule.progress, schedule.velocity)
+            kalman.filter()
+            # linear interpolation
+            time = np.arange(len(kalman.X[0]))
+            rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+            cost = np.interp(rate, kalman.X[0], time)
+            arr_cost = np.row_stack((arr_cost, np.array(cost)))
         pass
 
 
@@ -32,4 +43,13 @@ class SBMAC(SBMA):
 
 
 if __name__ == '__main__':
-    pass
+    period = 15
+    # generate schedule
+    schedule = Schedule(period)
+    schedule.gen()
+    # kalman filter
+    kalman = KalmanFilter(schedule.progress, schedule.velocity)
+    kalman.filter()
+    # setup SBMA
+    sbma = SBMA(kalman.X, 5, 0, period)
+    sbma.sbma_simulate()
