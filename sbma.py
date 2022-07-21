@@ -16,11 +16,14 @@ class SBMA(object):
         self.actual = n
         self.real = array[0, n] * t
         self.delta = self.actual - self.real
+        self.SLT = np.zeros(10)
+        self.SUT = np.zeros(10)
         self.simcount = 100
+        self.alpha = 0.1
     
     def sbma_simulate(self):
         """simulate activities distribution"""
-        # start simulate project finish time
+        # simulate project
         arr_cost = np.empty(shape=(0, 10))
         for i in range(0, self.simcount):
             # generate schedule
@@ -34,6 +37,14 @@ class SBMA(object):
             rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
             cost = np.interp(rate, kalman.X[0], time)
             arr_cost = np.row_stack((arr_cost, np.array(cost)))
+        # calculate control line
+        for j in range(0, 10):
+            cost = np.empty(shape=(0, self.simcount))
+            for i in range(0, self.simcount):
+                cost = np.append(cost, arr_cost[i, j])
+            cost_sort = np.sort(cost)
+            self.SLT[j] = cost_sort[int(self.simcount * self.alpha)]
+            self.SUT[j] = cost_sort[int(self.simcount * (1. - self.alpha))]
         pass
 
 
