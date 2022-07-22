@@ -69,8 +69,51 @@ class SBMA(object):
 
 
 class SBMAC(SBMA):
+    X = None
+    Count = 0
+    Status = dict()
+    
     def __init__(self, array, buffer, n, t):
+        """
+        :param array: project schedule progress status array (numpy array type) (2x2)
+        :param buffer: project schedule progress feeding or project buffer
+        :param n: project schedule progress status array actual length
+        :param t: project schedule progress periodic
+        """
         super(SBMAC, self).__init__(array, buffer, n, t)
+    
+    @staticmethod
+    def setup_array(array):
+        SBMAC.X = copy.deepcopy(array)
+        SBMAC.Count = 0
+        SBMAC.Status = dict()
+    
+    def sbma_analysis(self):
+        result = super(SBMAC, self).sbma_analysis()
+        if result == 0:
+            SBMAC.Status.update({"{}".format(self.actual): {"status": "G", "risk": "low", "control": 0}})
+        elif result == 1:
+            SBMAC.Status.update({"{}".format(self.actual): {"status": "Y", "risk": "medium", "control": 1}})
+        else:
+            SBMAC.Status.update({"{}".format(self.actual): {"status": "R", "risk": "high", "control": 1}})
+        return result
+    
+    def sbma_control(self):
+        result = self.sbma_analysis()
+        # project buffer consume result
+        if result == 0:
+            SBMAC.X[1, self.actual] = SBMAC.X[1, self.actual]
+        elif result == 1:
+            SBMAC.X[1, self.actual] = SBMAC.X[1, self.actual] + 0.025 * (1. - self.array[0, self.actual])
+            SBMAC.Count = SBMAC.Count + 1
+        else:
+            SBMAC.X[1, self.actual] = SBMAC.X[1, self.actual] + 0.05 * (1. - self.array[0, self.actual])
+            SBMAC.Count = SBMAC.Count + 1
+        # update current progress
+        if self.actual > 0:
+            SBMAC.X[0, self.actual] = SBMAC.X[0, self.actual - 1] + SBMAC.X[1, self.actual]
+        if SBMAC.X[0, self.actual] > 1.:
+            SBMAC.X[0, self.actual] = 1.
 
 
 if __name__ == '__main__':
