@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -47,3 +48,29 @@ class Schedule(object):
             self.velocity = np.append(self.velocity, velocity)
             self.progress = np.append(self.progress, progress)
         self.velocity = np.append(self.velocity, 0.0)
+
+
+if __name__ == '__main__':
+    period = 15
+    times = 10000
+    arr_period = np.empty(shape=(0, 0))
+    dist_period = dict()
+    # generate schedule
+    for i in range(0, times):
+        schedule = Schedule(period)
+        schedule.gen()
+        arr_period = np.append(arr_period, len(schedule.progress) - 1)
+    # statistic distribution
+    keys = np.unique(arr_period)
+    for k in keys:
+        v = arr_period[arr_period == k].size
+        dist_period[k] = v
+    # plot picture
+    plt.figure()
+    plt.plot(dist_period.keys(), dist_period.values(), marker="o", linestyle="--", color="lightcoral", label="Schedul Distribution")
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel("Time")
+    plt.ylabel("Number")
+    plt.title("Schedule Distribution")
+    plt.show()
