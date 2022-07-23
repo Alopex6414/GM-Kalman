@@ -57,7 +57,7 @@ if __name__ == '__main__':
     dist_period = dict()
     # generate schedule
     for i in range(0, times):
-        schedule = Schedule(period)
+        schedule = Schedule(period, sigma=0.05)
         schedule.gen()
         arr_period = np.append(arr_period, len(schedule.progress) - 1)
     # statistic distribution

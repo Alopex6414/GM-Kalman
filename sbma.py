@@ -21,7 +21,7 @@ class SBMA(object):
         self.alpha = 0.1
     
     def sbma_simulate(self):
-        """simulate activities distribution"""
+        """simulate activities distribution(Simulate)"""
         # simulate project
         arr_cost = np.empty(shape=(0, 10))
         for i in range(0, self.simcount):
@@ -44,6 +44,16 @@ class SBMA(object):
             cost_sort = np.sort(cost)
             self.SLT[j] = cost_sort[int(self.simcount * self.alpha)]
             self.SUT[j] = cost_sort[int(self.simcount * (1. - self.alpha))]
+    
+    def sbma_simulate2(self):
+        """simulate activities distribution(Buffer)"""
+        periodL = self.period - self.buffer / 2
+        periodU = self.period + self.buffer
+        intervalL = periodL / 10.
+        intervalU = periodU / 10.
+        for j in range(0, 10):
+            self.SLT[j] = (j + 1) * intervalL
+            self.SUT[j] = (j + 1) * intervalU
     
     def sbma_analysis(self):
         """analysis buffer cost"""
