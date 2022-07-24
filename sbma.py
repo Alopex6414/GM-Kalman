@@ -103,28 +103,25 @@ class SBMAC(SBMA):
     
     def sbma_analysis(self):
         result, cost = super(SBMAC, self).sbma_analysis()
+        SBMAC.Cost = np.append(SBMAC.Cost, cost)
         if result == 0:
-            SBMAC.Status.update({"{}".format(self.actual): {"status": "G", "risk": "low", "control": 0}})
+            SBMAC.Status.update({"{}".format(self.actual): {"status": "L", "risk": "low", "control": 0}})
         elif result == 1:
-            SBMAC.Status.update({"{}".format(self.actual): {"status": "Y", "risk": "medium", "control": 1}})
+            SBMAC.Status.update({"{}".format(self.actual): {"status": "M", "risk": "medium", "control": 1}})
         else:
-            SBMAC.Status.update({"{}".format(self.actual): {"status": "R", "risk": "high", "control": 1}})
+            SBMAC.Status.update({"{}".format(self.actual): {"status": "U", "risk": "high", "control": 1}})
         return result, cost
     
     def sbma_control(self):
-        result, cost = self.sbma_analysis()
+        result = self.sbma_analysis()
         # project buffer consume result
         if result == 0:
             SBMAC.X[1, self.actual] = SBMAC.X[1, self.actual]
-            SBMAC.Cost = np.append(SBMAC.Cost, cost)
         elif result == 1:
             SBMAC.X[1, self.actual] = SBMAC.X[1, self.actual]
-            SBMAC.Count = SBMAC.Count + 1
-            SBMAC.Cost = np.append(SBMAC.Cost, cost)
         else:
             SBMAC.X[1, self.actual] = SBMAC.X[1, self.actual] + 0.05 * (1. - self.array[0, self.actual])
             SBMAC.Count = SBMAC.Count + 1
-            SBMAC.Cost = np.append(SBMAC.Cost, cost)
         # update current progress
         if self.actual > 0:
             SBMAC.X[0, self.actual] = SBMAC.X[0, self.actual - 1] + SBMAC.X[1, self.actual]
