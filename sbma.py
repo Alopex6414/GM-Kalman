@@ -15,15 +15,18 @@ class SBMA(object):
         self.period = t
         self.actual = n
         self.current = array[0, n]
-        self.SLT = np.zeros(10)
-        self.SUT = np.zeros(10)
+        self.SLT = np.zeros(11)
+        self.SUT = np.zeros(11)
+        self.CL = 0.0
+        self.CU = 0.0
+        self.CV = 0.0
         self.simcount = 100
         self.alpha = 0.1
     
     def sbma_simulate(self):
         """simulate activities distribution(Simulate)"""
         # simulate project
-        arr_cost = np.empty(shape=(0, 10))
+        arr_cost = np.empty(shape=(0, 11))
         for i in range(0, self.simcount):
             # generate schedule
             schedule = Schedule(self.period)
@@ -33,11 +36,11 @@ class SBMA(object):
             kalman.filter()
             # linear interpolation
             time = np.arange(len(kalman.X[0]))
-            rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+            rate = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
             cost = np.interp(rate, kalman.X[0], time)
             arr_cost = np.row_stack((arr_cost, np.array(cost)))
         # calculate control line
-        for j in range(0, 10):
+        for j in range(0, 11):
             cost = np.empty(shape=(0, self.simcount))
             for i in range(0, self.simcount):
                 cost = np.append(cost, arr_cost[i, j])
@@ -45,32 +48,24 @@ class SBMA(object):
             self.SLT[j] = cost_sort[int(self.simcount * self.alpha)]
             self.SUT[j] = cost_sort[int(self.simcount * (1. - self.alpha))]
     
-    def sbma_simulate2(self):
-        """simulate activities distribution(Buffer)"""
-        periodL = self.period - self.buffer / 2
-        periodU = self.period + self.buffer
-        intervalL = periodL / 10.
-        intervalU = periodU / 10.
-        for j in range(0, 10):
-            self.SLT[j] = (j + 1) * intervalL
-            self.SUT[j] = (j + 1) * intervalU
-    
     def sbma_analysis(self):
         """analysis buffer cost"""
         self.sbma_simulate()
         # analysis buffer cost
-        time = np.arange(10)
+        time = np.arange(11)
         current = np.array([self.current])
-        rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-        cost = np.interp(current, rate, time)
+        rate = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        self.CV = np.interp(current, rate, time)
+        self.CL = np.interp(self.CV, time, self.SLT)
+        self.UL = np.interp(self.CV, time, self.SUT)
         # evaluate buffer cost
-        if self.actual < self.SLT[int(cost)]:
+        if self.actual <= self.CL:
             result = 0
-        elif self.actual < self.SUT[int(cost)]:
+        elif self.actual <= self.UL:
             result = 1
         else:
             result = 2
-        return result, cost
+        return result
 
 
 class SBMAC(SBMA):
@@ -95,22 +90,19 @@ class SBMAC(SBMA):
         SBMAC.Count = 0
         SBMAC.Status = dict()
     
-    def sbma_simulate(self):
-        super(SBMAC, self).sbma_simulate()
-    
-    def sbma_simulate2(self):
-        super(SBMAC, self).sbma_simulate2()
-    
     def sbma_analysis(self):
-        result, cost = super(SBMAC, self).sbma_analysis()
-        SBMAC.Cost = np.append(SBMAC.Cost, cost)
+        result = super(SBMAC, self).sbma_analysis()
+        SBMAC.Cost = np.append(SBMAC.Cost, self.CV)
         if result == 0:
-            SBMAC.Status.update({"{}".format(self.actual): {"status": "L", "risk": "low", "control": 0}})
+            SBMAC.Status.update({"{}".format(self.actual): {"CV": self.CV, "CL": self.CL, "CU": self.CU, 
+                                                            "status": "L", "risk": "low", "control": 0}})
         elif result == 1:
-            SBMAC.Status.update({"{}".format(self.actual): {"status": "M", "risk": "medium", "control": 1}})
+            SBMAC.Status.update({"{}".format(self.actual): {"CV": self.CV, "CL": self.CL, "CU": self.CU,
+                                                            "status": "M", "risk": "medium", "control": 1}})
         else:
-            SBMAC.Status.update({"{}".format(self.actual): {"status": "U", "risk": "high", "control": 1}})
-        return result, cost
+            SBMAC.Status.update({"{}".format(self.actual): {"CV": self.CV, "CL": self.CL, "CU": self.CU,
+                                                            "status": "U", "risk": "high", "control": 1}})
+        return result
     
     def sbma_control(self):
         result = self.sbma_analysis()
@@ -142,4 +134,3 @@ if __name__ == '__main__':
     for i in range(len(kalman.X[0])):
         s = SBMAC(kalman.X, 5, i, period)
         s.sbma_control()
-    print("hello")
