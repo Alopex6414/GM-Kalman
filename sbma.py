@@ -138,7 +138,7 @@ if __name__ == '__main__':
     x = np.arange(11)
     plt.figure()
     plt.plot(x, s.SUT, color="lightcoral", marker="o", linestyle="--", label="SLT")
-    plt.plot(x, s.SLT, color="lightgreen", marker="o", linestyle="--", label="sut")
+    plt.plot(x, s.SLT, color="lightgreen", marker="o", linestyle="--", label="SUT")
     plt.legend()
     plt.grid(True)
     plt.xlabel("Progress")
