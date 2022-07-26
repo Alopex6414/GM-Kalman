@@ -134,11 +134,16 @@ if __name__ == '__main__':
     for i in range(len(kalman.X[0])):
         s = SBMAC(kalman.X, 5, i, period)
         s.sbma_control()
+    # convert to progress
+    time = np.arange(len(kalman.X[0]))
+    rate = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    ACT = np.interp(rate, SBMAC.X[0], time)
     # subplot1 line (Progress)
     x = np.arange(11)
     plt.figure()
     plt.plot(x, s.SUT, color="lightcoral", marker="o", linestyle="--", label="SLT")
     plt.plot(x, s.SLT, color="lightgreen", marker="o", linestyle="--", label="SUT")
+    plt.plot(x, ACT, color="lightskyblue", marker="o", linestyle="--", label="ACT")
     plt.legend()
     plt.grid(True)
     plt.xlabel("Progress")
