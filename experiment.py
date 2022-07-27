@@ -45,12 +45,12 @@ class ExperimentSingle(object):
         # kalman filter
         self.kalman = KalmanFilter(self.schedule.progress, self.schedule.velocity)
         self.kalman.filter()
-        # GM/SP/RP/DP baseline
+        # GM/SP/RP/DP/SBMA baseline
         GMControl.setup_array(self.kalman.X)
         SPControl.setup_array(self.kalman.X)
         RPControl.setup_array(self.kalman.X)
         DPControl.setup_array(self.kalman.X)
-        # GM/SP/RP/DP predict
+        # GM/SP/RP/DP/SBMA predict
         for i in range(5, len(self.kalman.X[0])):
             self.gmc = GMControl(self.kalman.X, self.buffer, i, self.period)
             self.gmc.gray_predict2()
