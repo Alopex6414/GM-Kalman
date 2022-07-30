@@ -8,7 +8,7 @@ class Node(object):
         self.next = None
 
 
-class Linklist(object):
+class LinkList(object):
     def __init__(self, node=None) -> None:
         self.head = None
     
