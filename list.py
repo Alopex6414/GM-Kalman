@@ -78,10 +78,5 @@ class LinkList(object):
             cur.next = cur.next.next
 
 
-class Active(Node):
-    def __init__(self, value) -> None:
-        super().__init__(value)
-
-
 if __name__ == '__main__':
     pass
