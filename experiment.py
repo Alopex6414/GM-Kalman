@@ -45,12 +45,12 @@ class ExperimentSingle(object):
         # kalman filter
         self.kalman = KalmanFilter(self.schedule.progress, self.schedule.velocity)
         self.kalman.filter()
-        # GM/SP/RP/DP baseline
+        # GM/SP/RP/DP/SBMA baseline
         GMControl.setup_array(self.kalman.X)
         SPControl.setup_array(self.kalman.X)
         RPControl.setup_array(self.kalman.X)
         DPControl.setup_array(self.kalman.X)
-        # GM/SP/RP/DP predict
+        # GM/SP/RP/DP/SBMA predict
         for i in range(5, len(self.kalman.X[0])):
             self.gmc = GMControl(self.kalman.X, self.buffer, i, self.period)
             self.gmc.gray_predict2()
@@ -352,6 +352,8 @@ class ExperimentMultiple(ExperimentSingle):
             self.dist_dev_dp[k] = v
 
     def show(self):
+        # plot preparation
+        p = np.arange(self.number)
         # subplot1 line (Project Finish Time Statistic Distribution)
         plt.figure()
         plt.plot(self.dist_cc.keys(), self.dist_cc.values(), marker="o", linestyle="--", color="lightcoral",
@@ -478,6 +480,19 @@ class ExperimentMultiple(ExperimentSingle):
         plt.xlabel("Time")
         plt.ylabel("Number")
         plt.title("Project Discovery Deviation Time Distribution")
+        plt.show()
+        # subplot7 line (Project Finish Time Distribution)
+        plt.figure()
+        plt.plot(p, self.arr_cc, color="lightcoral", marker="o", linestyle="--", label="Critical Chain")
+        plt.plot(p, self.arr_gm, color="lightskyblue", marker="o", linestyle="--", label="Gray Model")
+        plt.plot(p, self.arr_sp, color="orange", marker="o", linestyle="--", label="Static Partition")
+        plt.plot(p, self.arr_rp, color="lightgreen", marker="o", linestyle="--", label="Relative Partition")
+        plt.plot(p, self.arr_dp, color="violet", marker="o", linestyle="--", label="Dynamic Partition")
+        plt.legend()
+        plt.grid(True)
+        plt.xlabel("number")
+        plt.ylabel("time")
+        plt.title("Project Finish Distribution")
         plt.show()
 
 

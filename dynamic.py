@@ -115,6 +115,7 @@ if __name__ == '__main__':
     DPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
         s = DPControl(kalman.X, 5, i, period)
+        s.dynamic_analysis()
         s.Green[i] = s.green
         s.Yellow[i] = s.yellow
         s.Red[i] = s.red

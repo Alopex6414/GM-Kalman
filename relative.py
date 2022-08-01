@@ -22,8 +22,8 @@ class RP(object):
         self.actual = n
         self.real = array[0, n] * t
         self.delta = self.actual - self.real
-        self.green = self.buffer * (0.15 + array[0, n] * (0.75 - 0.15))
-        self.yellow = self.buffer * (0.3 + array[0, n] * (0.9 - 0.3))
+        self.green = self.buffer * (0.15 + array[0, n] * 0.6)
+        self.yellow = self.buffer * (0.3 + array[0, n] * 0.6)
         self.red = self.buffer
         self.status = dict()
 
@@ -115,6 +115,7 @@ if __name__ == '__main__':
     RPControl.setup_array(kalman.X)
     for i in range(len(kalman.X[0])):
         s = RPControl(kalman.X, 5, i, period)
+        s.relative_analysis()
         s.Green[i] = s.green
         s.Yellow[i] = s.yellow
         s.Red[i] = s.red
