@@ -67,7 +67,8 @@ if __name__ == '__main__':
         dist_period[k] = v
     # plot picture
     plt.figure()
-    plt.plot(dist_period.keys(), dist_period.values(), marker="o", linestyle="--", color="lightcoral", label="Schedul Distribution")
+    plt.plot(dist_period.keys(), dist_period.values(), marker="o", linestyle="--", color="lightcoral",
+             label="Schedule Distribution")
     plt.legend()
     plt.grid(True)
     plt.xlabel("Time")
