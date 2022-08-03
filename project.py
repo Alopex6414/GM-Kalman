@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from list import Node
+from list import Node, LinkList
 from schedule import Schedule
 
 
 class Active(Node):
     def __init__(self, period, sigma=0.05) -> None:
         self.schedule = Schedule(period, sigma)
-        super().__init__(period)
+        super(Active, self).__init__(period)
+
+
+class Chain(LinkList):
+    def __init__(self, active):
+        super(Chain, self).__init__(active)
 
 
 class Project(object):

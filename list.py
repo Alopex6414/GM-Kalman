@@ -10,7 +10,7 @@ class Node(object):
 
 class LinkList(object):
     def __init__(self, node=None) -> None:
-        self.head = None
+        self.head = node
 
     def is_empty(self):
         return self.head is None
