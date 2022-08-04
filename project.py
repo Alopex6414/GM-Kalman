@@ -14,6 +14,9 @@ class Chain(LinkList):
     def __init__(self, active):
         super(Chain, self).__init__(active)
 
+    def append(self, item):
+        super(Chain, self).append(item)
+
 
 class Project(object):
     def __init__(self) -> None:
@@ -21,4 +24,8 @@ class Project(object):
 
 
 if __name__ == '__main__':
-    pass
+    active1 = Active(15, 0.05)
+    active2 = Active(20, 0.25)
+    chain1 = Chain(active1)
+    chain1.append(active2)
+    print("hello")
