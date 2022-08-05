@@ -14,8 +14,20 @@ class Chain(LinkList):
     def __init__(self, active):
         super(Chain, self).__init__(active)
 
+    def is_empty(self):
+        super(Chain, self).is_empty()
+
+    def travel(self):
+        super(Chain, self).travel()
+
+    def length(self):
+        super(Chain, self).length()
+
     def append(self, item):
         super(Chain, self).append(item)
+
+    def add(self, item):
+        super(Chain, self).add(item)
 
 
 class Project(object):
