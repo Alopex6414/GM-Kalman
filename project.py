@@ -29,6 +29,9 @@ class Chain(LinkList):
     def add(self, item):
         super(Chain, self).add(item)
 
+    def insert(self, pos, item):
+        super(Chain, self).insert(pos, item)
+
 
 class Project(object):
     def __init__(self) -> None:
