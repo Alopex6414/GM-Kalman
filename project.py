@@ -12,6 +12,8 @@ class Active(object):
 class Chain(object):
     def __init__(self, active=None) -> None:
         self.head = active
+        self.period = None
+        self.actual = None
 
     def is_empty(self):
         return self.head is None
@@ -27,8 +29,12 @@ class Chain(object):
 
     def gen(self):
         cur = self.head
+        self.period = 0
+        self.actual = 0
         while cur is not None:
             cur.schedule.gen()
+            self.period += cur.schedule.period
+            self.actual += cur.schedule.actual
             cur = cur.next
 
 
