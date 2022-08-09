@@ -18,6 +18,14 @@ class Chain(object):
     def is_empty(self):
         return self.head is None
 
+    def length(self):
+        cur = self.head
+        count = 0
+        while cur is not None:
+            count += 1
+            cur = cur.next
+        return count
+
     def append(self, active):
         if self.is_empty():
             self.head = active
