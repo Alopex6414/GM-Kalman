@@ -35,6 +35,26 @@ class Chain(object):
                 cur = cur.next
             cur.next = active
 
+    def add(self, active):
+        node = active
+        node.next = self.head
+        self.head = node
+
+    def insert(self, pos, active):
+        if pos <= 0:
+            self.add(active)
+        elif pos > self.length() - 1:
+            self.append(active)
+        else:
+            pre = self.head
+            count = 0
+            while count < pos - 1:
+                count += 1
+                pre = pre.next
+            node = active
+            node.next = pre.next
+            pre.next = node
+
     def gen(self):
         cur = self.head
         self.period = 0
