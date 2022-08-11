@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from schedule import Schedule
+from kalman import KalmanFilter
 
 
 class Active(object):
     def __init__(self, period, sigma=0.05) -> None:
         self.schedule = Schedule(period, sigma)
+        self.schedule.gen()
+        self.kalman = KalmanFilter(self.schedule.progress, self.schedule.velocity)
+        self.kalman.filter()
         self.next = None
 
 
@@ -60,7 +64,6 @@ class Chain(object):
         self.period = 0
         self.actual = 0
         while cur is not None:
-            cur.schedule.gen()
             self.period += cur.schedule.period
             self.actual += cur.schedule.actual
             cur = cur.next
