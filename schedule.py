@@ -13,6 +13,7 @@ class Schedule(object):
         self.period = period
         self.sigma = sigma
         self.mu = 1 / period
+        self.actual = None
         self.velocity = None
         self.progress = None
 
@@ -48,6 +49,15 @@ class Schedule(object):
             self.velocity = np.append(self.velocity, velocity)
             self.progress = np.append(self.progress, progress)
         self.velocity = np.append(self.velocity, 0.0)
+        # calculate actual time
+        b = False
+        for i in range(0, len(self.progress)):
+            if self.progress[i] >= 1.:
+                b = True
+                self.actual = i
+                break
+        if not b:
+            self.actual = len(self.progress)
 
 
 if __name__ == '__main__':
@@ -67,7 +77,8 @@ if __name__ == '__main__':
         dist_period[k] = v
     # plot picture
     plt.figure()
-    plt.plot(dist_period.keys(), dist_period.values(), marker="o", linestyle="--", color="lightcoral", label="Schedul Distribution")
+    plt.plot(dist_period.keys(), dist_period.values(), marker="o", linestyle="--", color="lightcoral",
+             label="Schedule Distribution")
     plt.legend()
     plt.grid(True)
     plt.xlabel("Time")
