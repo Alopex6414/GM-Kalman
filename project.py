@@ -144,6 +144,12 @@ class Chain(object):
             self.actual += cur.schedule.actual
             cur = cur.next
 
+    def simulate(self):
+        cur = self.head
+        while cur is not None:
+            cur.simulate()
+            cur = cur.next
+
 
 class Project(object):
     def __init__(self) -> None:
