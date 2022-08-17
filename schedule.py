@@ -63,7 +63,7 @@ class Schedule(object):
         """
         :function: generate random log normal distribute project schedule
         """
-        self.velocity = np.random.lognormal(self.mu, self.sigma, self.period)
+        self.velocity = np.random.lognormal(self.mu, self.sigma, self.period) - 1
         print(self.velocity)
         # velocity should not less than zero
         for i in range(0, len(self.velocity)):
