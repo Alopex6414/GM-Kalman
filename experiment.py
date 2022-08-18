@@ -39,7 +39,7 @@ class ExperimentSingle(object):
 
     def simulate(self):
         # generate schedule
-        self.schedule = Schedule(self.period)
+        self.schedule = Schedule(self.period, sigma=0.05)
         self.schedule.gen()
         # kalman filter
         self.kalman = KalmanFilter(self.schedule.progress, self.schedule.velocity)
@@ -496,6 +496,6 @@ class ExperimentMultiple(ExperimentSingle):
 
 
 if __name__ == '__main__':
-    s = ExperimentMultiple(15, 3, 10000)
+    s = ExperimentMultiple(1, 1, 10000)
     s.simulate()
     s.show()
