@@ -370,6 +370,7 @@ class ExperimentMultiple(ExperimentSingle):
         plt.xlabel("Time")
         plt.ylabel("Number")
         plt.title("Project Finish Time Statistic Distribution")
+        plt.savefig("./figure/dist_ex.png")
         plt.show()
         # subplot2 bar(Finish Time Overdue & On Schedule)
         plt.figure()
@@ -496,6 +497,6 @@ class ExperimentMultiple(ExperimentSingle):
 
 
 if __name__ == '__main__':
-    s = ExperimentMultiple(1, 1, 10000)
+    s = ExperimentMultiple(9, 3, 10000)
     s.simulate()
     s.show()
