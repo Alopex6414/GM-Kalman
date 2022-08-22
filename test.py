@@ -18,7 +18,6 @@ if __name__ == '__main__':
     mu = np.log(scale)
     data = np.random.lognormal(mu, sigma, 10000)
     data = np.sort(data)
-    print(data)
     # plot picture
     plt.figure()
     plt.plot(data, marker="o", linestyle="--", color="lightcoral", label="Schedule Distribution")
