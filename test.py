@@ -2,25 +2,17 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-def lognorm_params(mode, stddev):
-    p = np.poly1d([1, -1, 0, 0, -(stddev / mode) ** 2])
-    r = p.roots
-    sol = r[(r.imag == 0) & (r.real > 0)].real
-    shape = np.sqrt(np.log(sol))
-    scale = mode * sol
-    return shape, scale
+from scipy.stats import lognorm
 
 
 if __name__ == '__main__':
-    sigma, scale = lognorm_params(1, 0.1)
-    mu = np.log(scale)
-    data = np.random.lognormal(mu, sigma, 10000)
-    data = np.sort(data)
+    s = 0.954
+    mean, var, skew, kurt = lognorm.stats(s, moments='mvsk')
+    x = np.linspace(lognorm.ppf(0.01, s), lognorm.ppf(0.99, s), 100)
+    r = lognorm.rvs(s, size=1000)
     # plot picture
     plt.figure()
-    plt.plot(data, marker="o", linestyle="--", color="lightcoral", label="Schedule Distribution")
+    plt.plot(r, marker="o", linestyle="--", color="lightcoral", label="Schedule Distribution")
     plt.legend()
     plt.grid(True)
     plt.xlabel("Time")
