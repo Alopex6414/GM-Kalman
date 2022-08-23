@@ -370,7 +370,6 @@ class ExperimentMultiple(ExperimentSingle):
         plt.xlabel("Time")
         plt.ylabel("Number")
         plt.title("Project Finish Time Statistic Distribution")
-        plt.savefig("./figure/dist_ex.png")
         plt.show()
         # subplot2 bar(Finish Time Overdue & On Schedule)
         plt.figure()
