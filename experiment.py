@@ -11,11 +11,6 @@ from relative import RPControl
 from dynamic import DPControl
 
 
-class Experiment(object):
-    def __init__(self):
-        pass
-
-
 class ExperimentSingle(object):
     def __init__(self, period, buffer):
         """
