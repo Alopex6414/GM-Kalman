@@ -70,7 +70,7 @@ class Chain(object):
     def simulate(self):
         cur = self.head
         while cur is not None:
-            cur.simulate()
+            cur.active.simulate()
             cur = cur.next
 
 
