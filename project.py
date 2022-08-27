@@ -58,15 +58,6 @@ class Chain(object):
             node.next = pre.next
             pre.next = node
 
-    def gen(self):
-        cur = self.head
-        self.period = 0
-        self.actual = 0
-        while cur is not None:
-            self.period += cur.schedule.period
-            self.actual += cur.schedule.actual
-            cur = cur.next
-
     def simulate(self):
         cur = self.head
         while cur is not None:
