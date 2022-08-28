@@ -17,6 +17,10 @@ class Chain(object):
         self.head = active
         self.period = None
         self.actual = None
+        self.time_gm = 0
+        self.time_sp = 0
+        self.time_rp = 0
+        self.time_dp = 0
 
     def is_empty(self):
         return self.head is None
@@ -62,6 +66,10 @@ class Chain(object):
         cur = self.head
         while cur is not None:
             cur.active.simulate()
+            self.time_gm += cur.active.time_gm
+            self.time_sp += cur.active.time_sp
+            self.time_rp += cur.active.time_rp
+            self.time_dp += cur.active.time_dp
             cur = cur.next
 
 
