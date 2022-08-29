@@ -5,7 +5,7 @@ from experiment import ExperimentSingle
 
 class Active(object):
     def __init__(self, period, buffer, sigma=0.05) -> None:
-        self.active = ExperimentSingle(period, buffer)
+        self.active = ExperimentSingle(period, buffer, sigma)
         self.next = None
 
     def simulate(self):
@@ -21,6 +21,11 @@ class Chain(object):
         self.time_sp = 0
         self.time_rp = 0
         self.time_dp = 0
+        self.cost_gm = 0
+        self.cost_sp = 0
+        self.cost_rp = 0
+        self.cost_dp = 0
+        self.total_buffer = 0
 
     def is_empty(self):
         return self.head is None
@@ -70,6 +75,11 @@ class Chain(object):
             self.time_sp += cur.active.time_sp
             self.time_rp += cur.active.time_rp
             self.time_dp += cur.active.time_dp
+            self.cost_gm += cur.active.time_gm - cur.active.time_expect
+            self.cost_sp += cur.active.time_sp - cur.active.time_expect
+            self.cost_rp += cur.active.time_rp - cur.active.time_expect
+            self.cost_dp += cur.active.time_dp - cur.active.time_expect
+            self.total_buffer += cur.active.buffer
             cur = cur.next
 
 
