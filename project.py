@@ -5,7 +5,7 @@ from experiment import ExperimentSingle
 
 class Active(object):
     def __init__(self, period, buffer, sigma=0.05) -> None:
-        self.active = ExperimentSingle(period, buffer)
+        self.active = ExperimentSingle(period, buffer, sigma)
         self.next = None
 
     def simulate(self):
