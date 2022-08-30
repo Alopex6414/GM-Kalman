@@ -81,6 +81,15 @@ class Chain(object):
             self.cost_dp += cur.active.time_dp - cur.active.time_expect
             self.total_buffer += cur.active.buffer
             cur = cur.next
+        # End of Chain
+        if self.cost_gm < 0:
+            self.cost_gm = 0
+        if self.cost_sp < 0:
+            self.cost_sp = 0
+        if self.cost_rp < 0:
+            self.cost_rp = 0
+        if self.cost_dp < 0:
+            self.cost_dp = 0
 
 
 class Project(object):
