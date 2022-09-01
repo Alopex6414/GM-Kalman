@@ -93,9 +93,15 @@ class Chain(object):
 
 
 class Project(object):
-    def __init__(self, chain) -> None:
+    def __init__(self) -> None:
         self.list_chain = list()
+
+    def append(self, chain):
         self.list_chain.append(chain)
+
+    def simulate(self):
+        for i in range(len(self.list_chain)):
+            self.list_chain[i].simulate()
 
 
 if __name__ == '__main__':
@@ -106,5 +112,6 @@ if __name__ == '__main__':
     chain1.append(active2)
     chain1.append(active3)
     chain1.simulate()
-    project1 = Project(chain1)
+    project1 = Project()
+    project1.append(chain1)
     print("hello")
