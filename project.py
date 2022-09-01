@@ -81,11 +81,21 @@ class Chain(object):
             self.cost_dp += cur.active.time_dp - cur.active.time_expect
             self.total_buffer += cur.active.buffer
             cur = cur.next
+        # End of Chain
+        if self.cost_gm < 0:
+            self.cost_gm = 0
+        if self.cost_sp < 0:
+            self.cost_sp = 0
+        if self.cost_rp < 0:
+            self.cost_rp = 0
+        if self.cost_dp < 0:
+            self.cost_dp = 0
 
 
 class Project(object):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, chain) -> None:
+        self.list_chain = list()
+        self.list_chain.append(chain)
 
 
 if __name__ == '__main__':
@@ -96,4 +106,5 @@ if __name__ == '__main__':
     chain1.append(active2)
     chain1.append(active3)
     chain1.simulate()
+    project1 = Project(chain1)
     print("hello")
