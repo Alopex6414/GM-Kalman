@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from experiment import ExperimentSingle
+from gm import GMControl
+from static import SPControl
+from relative import RPControl
+from dynamic import DPControl
 
 
 class Active(object):
@@ -25,6 +29,10 @@ class Chain(object):
         self.cost_sp = 0
         self.cost_rp = 0
         self.cost_dp = 0
+        self.ctrl_gm = 0
+        self.ctrl_sp = 0
+        self.ctrl_rp = 0
+        self.ctrl_dp = 0
         self.total_buffer = 0
 
     def is_empty(self):
@@ -79,6 +87,10 @@ class Chain(object):
             self.cost_sp += cur.active.time_sp - cur.active.time_expect
             self.cost_rp += cur.active.time_rp - cur.active.time_expect
             self.cost_dp += cur.active.time_dp - cur.active.time_expect
+            self.ctrl_gm += GMControl.Count
+            self.ctrl_sp += SPControl.Count
+            self.ctrl_rp += RPControl.Count
+            self.ctrl_dp += DPControl.Count
             self.total_buffer += cur.active.buffer
             cur = cur.next
         # End of Chain
