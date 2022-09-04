@@ -132,7 +132,7 @@ if __name__ == '__main__':
     chain1.append(activeH)
     chain1.append(activeKM)
     chain1.append(activeNOP)
-    # chain 2
+    # chain 2 (critical chain)
     chain2 = Chain(activeABCF)
     chain2.append(activeG)
     chain2.append(activeJM)
