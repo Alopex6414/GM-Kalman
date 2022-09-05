@@ -142,6 +142,7 @@ if __name__ == '__main__':
     chain3.append(activeI)
     chain3.append(activeLM)
     chain3.append(activeNOP)
+    # project 1
     project1 = Project()
     project1.append(chain1)
     project1.append(chain2)
