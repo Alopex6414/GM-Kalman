@@ -117,6 +117,12 @@ class Project(object):
 
 
 if __name__ == '__main__':
+    # Project Activities
+    activeA = Active(3, 1, 0.05)
+    activeB = Active(1, 0.5, 0.05)
+    activeC = Active(3, 1, 0.05)
+    activeD = Active(2, 0.5, 0.05)
+    # Combine Activities
     activeABDF = Active(7, 3.5, 0.05)
     activeABCF = Active(8, 3, 0.05)
     activeABEF = Active(7, 3.5, 0.05)
