@@ -116,13 +116,33 @@ class Project(object):
             self.list_chain[i].simulate()
 
 
+class ProjectSimulator(object):
+    def __init__(self) -> None:
+        self.project = Project()
+
+
 if __name__ == '__main__':
+    # Project Activities
+    activeA = Active(3, 1, 0.05)
+    activeB = Active(1, 0.5, 0.05)
+    activeC = Active(3, 1, 0.05)
+    activeD = Active(2, 0.5, 0.05)
+    activeE = Active(2, 0.5, 0.05)
+    activeF = Active(1, 0.5, 0.05)
+    activeG = Active(21, 7, 0.05)
+    activeH = Active(15, 5, 0.05)
+    activeI = Active(18, 6, 0.05)
+    activeJ = Active(9, 3, 0.05)
+    activeK = Active(5, 1.5, 0.05)
+    activeL = Active(6, 2, 0.05)
+    activeM = Active(1, 0, 0.05)
+    activeN = Active(3, 2, 0.05)
+    activeO = Active(2, 1, 0.05)
+    activeP = Active(1, 0, 0.05)
+    # Combine Activities
     activeABDF = Active(7, 3.5, 0.05)
     activeABCF = Active(8, 3, 0.05)
     activeABEF = Active(7, 3.5, 0.05)
-    activeH = Active(15, 5, 0.05)
-    activeG = Active(21, 7, 0.05)
-    activeI = Active(18, 6, 0.05)
     activeKM = Active(6, 5.5, 0.05)
     activeJM = Active(10, 3, 0.05)
     activeLM = Active(7, 5, 0.05)
