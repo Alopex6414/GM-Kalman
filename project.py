@@ -116,6 +116,11 @@ class Project(object):
             self.list_chain[i].simulate()
 
 
+class ProjectSimulator(object):
+    def __init__(self) -> None:
+        self.project = Project()
+
+
 if __name__ == '__main__':
     # Project Activities
     activeA = Active(3, 1, 0.05)
