@@ -117,8 +117,9 @@ class Project(object):
 
 
 class ProjectSimulator(object):
-    def __init__(self) -> None:
+    def __init__(self, number) -> None:
         self.project = Project()
+        self.number = number
 
 
 if __name__ == '__main__':
