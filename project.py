@@ -124,6 +124,10 @@ class ProjectSimulator(object):
     def append(self, chain):
         self.project.append(chain)
 
+    def simulate(self):
+        for i in range(self.number):
+            self.project.simulate()
+
 
 if __name__ == '__main__':
     # Project Activities
