@@ -183,4 +183,10 @@ if __name__ == '__main__':
     project1.append(chain2)
     project1.append(chain3)
     project1.simulate()
+    # project simulator
+    ps = ProjectSimulator(10000)
+    ps.append(chain1)
+    ps.append(chain2)
+    ps.append(chain3)
+    # ps.simulate()
     print("hello")
