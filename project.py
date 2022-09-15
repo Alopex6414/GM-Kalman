@@ -19,8 +19,7 @@ class Active(object):
 class Chain(object):
     def __init__(self, active=None) -> None:
         self.head = active
-        self.period = None
-        self.actual = None
+        self.period = 0
         self.time_gm = 0
         self.time_sp = 0
         self.time_rp = 0
@@ -79,6 +78,7 @@ class Chain(object):
         cur = self.head
         while cur is not None:
             cur.active.simulate()
+            self.period += cur.active.time_expect
             self.time_gm += cur.active.time_gm
             self.time_sp += cur.active.time_sp
             self.time_rp += cur.active.time_rp
