@@ -120,6 +120,7 @@ class ProjectSimulator(object):
     def __init__(self, number) -> None:
         self.project = Project()
         self.number = number
+        self.period = list()
 
     def append(self, chain):
         self.project.append(chain)
@@ -127,6 +128,12 @@ class ProjectSimulator(object):
     def simulate(self):
         for i in range(self.number):
             self.project.simulate()
+            # calc period of each project simulation
+            period = self.project.list_chain[0]
+            for i in range(len(self.project.list_chain)):
+                if self.project.list_chain[i] > period:
+                    period = self.project.list_chain[i]
+            self.period.append(self.period, period)
 
 
 if __name__ == '__main__':
