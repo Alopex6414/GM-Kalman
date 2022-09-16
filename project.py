@@ -19,8 +19,7 @@ class Active(object):
 class Chain(object):
     def __init__(self, active=None) -> None:
         self.head = active
-        self.period = None
-        self.actual = None
+        self.period = 0
         self.time_gm = 0
         self.time_sp = 0
         self.time_rp = 0
@@ -75,10 +74,28 @@ class Chain(object):
             node.next = pre.next
             pre.next = node
 
+    def clean(self):
+        self.period = 0
+        self.time_gm = 0
+        self.time_sp = 0
+        self.time_rp = 0
+        self.time_dp = 0
+        self.cost_gm = 0
+        self.cost_sp = 0
+        self.cost_rp = 0
+        self.cost_dp = 0
+        self.ctrl_gm = 0
+        self.ctrl_sp = 0
+        self.ctrl_rp = 0
+        self.ctrl_dp = 0
+        self.total_buffer = 0
+
     def simulate(self):
         cur = self.head
+        self.clean()
         while cur is not None:
             cur.active.simulate()
+            self.period += cur.active.time_expect
             self.time_gm += cur.active.time_gm
             self.time_sp += cur.active.time_sp
             self.time_rp += cur.active.time_rp
@@ -120,7 +137,7 @@ class ProjectSimulator(object):
     def __init__(self, number) -> None:
         self.project = Project()
         self.number = number
-        self.period = list()
+        self.period_gm = list()
 
     def append(self, chain):
         self.project.append(chain)
@@ -129,11 +146,11 @@ class ProjectSimulator(object):
         for i in range(self.number):
             self.project.simulate()
             # calc period of each project simulation
-            period = self.project.list_chain[0]
+            period_gm = self.project.list_chain[0].time_gm
             for i in range(len(self.project.list_chain)):
-                if self.project.list_chain[i] > period:
-                    period = self.project.list_chain[i]
-            self.period.append(self.period, period)
+                if self.project.list_chain[i].period > period_gm:
+                    period_gm = self.project.list_chain[i].time_gm
+            self.period_gm.append(period_gm)
 
 
 if __name__ == '__main__':
@@ -155,10 +172,10 @@ if __name__ == '__main__':
     activeO = Active(2, 1, 0.05)
     activeP = Active(1, 0, 0.05)
     # Combine Activities
-    activeABDF = Active(7, 3.5, 0.05)
+    activeABDF = Active(7, 3, 0.05)
     activeABCF = Active(8, 3, 0.05)
-    activeABEF = Active(7, 3.5, 0.05)
-    activeKM = Active(6, 5.5, 0.05)
+    activeABEF = Active(7, 3, 0.05)
+    activeKM = Active(6, 5, 0.05)
     activeJM = Active(10, 3, 0.05)
     activeLM = Active(7, 5, 0.05)
     activeNOP = Active(6, 3, 0.05)
@@ -183,4 +200,10 @@ if __name__ == '__main__':
     project1.append(chain2)
     project1.append(chain3)
     project1.simulate()
+    # project simulator
+    ps = ProjectSimulator(100)
+    ps.append(chain1)
+    ps.append(chain2)
+    ps.append(chain3)
+    ps.simulate()
     print("hello")
