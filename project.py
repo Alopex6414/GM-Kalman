@@ -138,6 +138,9 @@ class ProjectSimulator(object):
         self.project = Project()
         self.number = number
         self.period_gm = list()
+        self.period_sp = list()
+        self.period_rp = list()
+        self.period_dp = list()
 
     def append(self, chain):
         self.project.append(chain)
@@ -147,10 +150,19 @@ class ProjectSimulator(object):
             self.project.simulate()
             # calc period of each project simulation
             period_gm = self.project.list_chain[0].time_gm
+            period_sp = self.project.list_chain[0].time_sp
+            period_rp = self.project.list_chain[0].time_rp
+            period_dp = self.project.list_chain[0].time_dp
             for i in range(len(self.project.list_chain)):
                 if self.project.list_chain[i].period > period_gm:
                     period_gm = self.project.list_chain[i].time_gm
+                    period_sp = self.project.list_chain[i].time_sp
+                    period_rp = self.project.list_chain[i].time_rp
+                    period_dp = self.project.list_chain[i].time_dp
             self.period_gm.append(period_gm)
+            self.period_sp.append(period_sp)
+            self.period_rp.append(period_rp)
+            self.period_dp.append(period_dp)
 
 
 if __name__ == '__main__':
