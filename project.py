@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import numpy as np
+
 from experiment import ExperimentSingle
 from gm import GMControl
 from static import SPControl
@@ -141,6 +143,10 @@ class ProjectSimulator(object):
         self.period_sp = list()
         self.period_rp = list()
         self.period_dp = list()
+        self.ave_gm = 0
+        self.ave_sp = 0
+        self.ave_rp = 0
+        self.ave_dp = 0
 
     def append(self, chain):
         self.project.append(chain)
@@ -163,6 +169,11 @@ class ProjectSimulator(object):
             self.period_sp.append(period_sp)
             self.period_rp.append(period_rp)
             self.period_dp.append(period_dp)
+        # project data statistic
+        self.ave_gm = np.average(self.period_gm)
+        self.ave_sp = np.average(self.period_sp)
+        self.ave_rp = np.average(self.period_rp)
+        self.ave_dp = np.average(self.period_dp)
 
 
 if __name__ == '__main__':
