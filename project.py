@@ -143,6 +143,7 @@ class ProjectSimulator(object):
         self.period_sp = list()
         self.period_rp = list()
         self.period_dp = list()
+        self.period = 0
         self.ave_gm = 0
         self.ave_sp = 0
         self.ave_rp = 0
@@ -155,16 +156,23 @@ class ProjectSimulator(object):
         for i in range(self.number):
             self.project.simulate()
             # calc period of each project simulation
+            period = self.period
             period_gm = self.project.list_chain[0].time_gm
             period_sp = self.project.list_chain[0].time_sp
             period_rp = self.project.list_chain[0].time_rp
             period_dp = self.project.list_chain[0].time_dp
             for i in range(len(self.project.list_chain)):
-                if self.project.list_chain[i].period > period_gm:
+                if self.project.list_chain[i].period > period:
+                    period = self.project.list_chain[i].period
+                if self.project.list_chain[i].time_gm > period_gm:
                     period_gm = self.project.list_chain[i].time_gm
+                if self.project.list_chain[i].time_sp > period_sp:
                     period_sp = self.project.list_chain[i].time_sp
+                if self.project.list_chain[i].time_rp > period_rp:
                     period_rp = self.project.list_chain[i].time_rp
+                if self.project.list_chain[i].time_dp > period_dp:
                     period_dp = self.project.list_chain[i].time_dp
+            self.period = period
             self.period_gm.append(period_gm)
             self.period_sp.append(period_sp)
             self.period_rp.append(period_rp)
