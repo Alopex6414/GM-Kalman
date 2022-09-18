@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import numpy as np
+
 from experiment import ExperimentSingle
 from gm import GMControl
 from static import SPControl
@@ -141,6 +143,11 @@ class ProjectSimulator(object):
         self.period_sp = list()
         self.period_rp = list()
         self.period_dp = list()
+        self.period = 0
+        self.ave_gm = 0
+        self.ave_sp = 0
+        self.ave_rp = 0
+        self.ave_dp = 0
 
     def append(self, chain):
         self.project.append(chain)
@@ -149,20 +156,32 @@ class ProjectSimulator(object):
         for i in range(self.number):
             self.project.simulate()
             # calc period of each project simulation
+            period = self.period
             period_gm = self.project.list_chain[0].time_gm
             period_sp = self.project.list_chain[0].time_sp
             period_rp = self.project.list_chain[0].time_rp
             period_dp = self.project.list_chain[0].time_dp
             for i in range(len(self.project.list_chain)):
-                if self.project.list_chain[i].period > period_gm:
+                if self.project.list_chain[i].period > period:
+                    period = self.project.list_chain[i].period
+                if self.project.list_chain[i].time_gm > period_gm:
                     period_gm = self.project.list_chain[i].time_gm
+                if self.project.list_chain[i].time_sp > period_sp:
                     period_sp = self.project.list_chain[i].time_sp
+                if self.project.list_chain[i].time_rp > period_rp:
                     period_rp = self.project.list_chain[i].time_rp
+                if self.project.list_chain[i].time_dp > period_dp:
                     period_dp = self.project.list_chain[i].time_dp
+            self.period = period
             self.period_gm.append(period_gm)
             self.period_sp.append(period_sp)
             self.period_rp.append(period_rp)
             self.period_dp.append(period_dp)
+        # project data statistic
+        self.ave_gm = np.average(self.period_gm)
+        self.ave_sp = np.average(self.period_sp)
+        self.ave_rp = np.average(self.period_rp)
+        self.ave_dp = np.average(self.period_dp)
 
 
 if __name__ == '__main__':
