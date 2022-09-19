@@ -172,6 +172,7 @@ class ProjectSimulator(object):
                     period_rp = self.project.list_chain[i].time_rp
                 if self.project.list_chain[i].time_dp > period_dp:
                     period_dp = self.project.list_chain[i].time_dp
+            # period list append elements
             self.period = period
             self.period_gm.append(period_gm)
             self.period_sp.append(period_sp)
