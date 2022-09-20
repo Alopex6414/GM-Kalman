@@ -232,7 +232,7 @@ if __name__ == '__main__':
     project1.append(chain2)
     project1.append(chain3)
     project1.simulate()
-    # project simulator
+    # project simulator calculate
     ps = ProjectSimulator(100)
     ps.append(chain1)
     ps.append(chain2)
