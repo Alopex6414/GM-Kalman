@@ -148,6 +148,10 @@ class ProjectSimulator(object):
         self.ave_sp = 0
         self.ave_rp = 0
         self.ave_dp = 0
+        self.dist_gm = dict()
+        self.dist_sp = dict()
+        self.dist_rp = dict()
+        self.dist_dp = dict()
 
     def append(self, chain):
         self.project.append(chain)
@@ -183,6 +187,23 @@ class ProjectSimulator(object):
         self.ave_sp = np.average(self.period_sp)
         self.ave_rp = np.average(self.period_rp)
         self.ave_dp = np.average(self.period_dp)
+        # project finish diction
+        keys = np.unique(self.period_gm)
+        for k in keys:
+            v = self.period_gm[self.period_gm == k].size
+            self.dist_gm[k] = v
+        keys = np.unique(self.period_sp)
+        for k in keys:
+            v = self.period_sp[self.period_sp == k].size
+            self.dist_sp[k] = v
+        keys = np.unique(self.period_rp)
+        for k in keys:
+            v = self.period_rp[self.period_rp == k].size
+            self.dist_rp[k] = v
+        keys = np.unique(self.period_dp)
+        for k in keys:
+            v = self.period_dp[self.period_dp == k].size
+            self.dist_dp[k] = v
 
 
 if __name__ == '__main__':
