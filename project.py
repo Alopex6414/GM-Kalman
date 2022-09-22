@@ -139,10 +139,10 @@ class ProjectSimulator(object):
     def __init__(self, number) -> None:
         self.project = Project()
         self.number = number
-        self.period_gm = list()
-        self.period_sp = list()
-        self.period_rp = list()
-        self.period_dp = list()
+        self.period_gm = np.empty(shape=(0, 0))
+        self.period_sp = np.empty(shape=(0, 0))
+        self.period_rp = np.empty(shape=(0, 0))
+        self.period_dp = np.empty(shape=(0, 0))
         self.period = 0
         self.ave_gm = 0
         self.ave_sp = 0
@@ -178,10 +178,10 @@ class ProjectSimulator(object):
                     period_dp = self.project.list_chain[i].time_dp
             # period list append elements
             self.period = period
-            self.period_gm.append(period_gm)
-            self.period_sp.append(period_sp)
-            self.period_rp.append(period_rp)
-            self.period_dp.append(period_dp)
+            self.period_gm = np.append(self.period_gm, period_gm)
+            self.period_sp = np.append(self.period_sp, period_sp)
+            self.period_rp = np.append(self.period_rp, period_rp)
+            self.period_dp = np.append(self.period_dp, period_dp)
         # project data statistic
         self.ave_gm = np.average(self.period_gm)
         self.ave_sp = np.average(self.period_sp)
