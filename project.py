@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
 import numpy as np
 
 from experiment import ExperimentSingle
@@ -254,9 +255,26 @@ if __name__ == '__main__':
     project1.append(chain3)
     project1.simulate()
     # project simulator calculate
-    ps = ProjectSimulator(100)
+    ps = ProjectSimulator(10000)
     ps.append(chain1)
     ps.append(chain2)
     ps.append(chain3)
     ps.simulate()
+    # project graphics charts
+    plt.figure()
+    plt.plot(ps.dist_gm.keys(), ps.dist_gm.values(), color="lightskyblue", marker="o", linestyle="--",
+             label="Gray Model")
+    plt.plot(ps.dist_sp.keys(), ps.dist_sp.values(), color="orange", marker="o", linestyle="--",
+             label="Static Partition")
+    plt.plot(ps.dist_rp.keys(), ps.dist_rp.values(), color="lightgreen", marker="o", linestyle="--",
+             label="Relative Partition")
+    plt.plot(ps.dist_dp.keys(), ps.dist_dp.values(), color="violet", marker="o", linestyle="--",
+             label="Dynamic Partition")
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel("Buffer")
+    plt.ylabel("Number")
+    plt.title("Project Finish Time Cost Distribution")
+    plt.savefig("./figure/project_simulate.png")
+    plt.show()
     print("hello")
