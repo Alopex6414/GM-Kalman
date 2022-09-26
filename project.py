@@ -274,7 +274,7 @@ if __name__ == '__main__':
     plt.grid(True)
     plt.xlabel("Buffer")
     plt.ylabel("Number")
-    plt.title("Project Finish Time Cost Distribution")
+    plt.title("Project Time Cost Distribution")
     plt.savefig("./figure/project_simulate.png")
     plt.show()
     print("hello")
