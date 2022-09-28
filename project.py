@@ -261,6 +261,7 @@ if __name__ == '__main__':
     ps.append(chain3)
     ps.simulate()
     # project graphics charts
+    # project graphics 1 (Project Time Cost Distribution)
     plt.figure()
     plt.plot(ps.dist_gm.keys(), ps.dist_gm.values(), color="lightskyblue", marker="o", linestyle="--",
              label="Gray Model")
