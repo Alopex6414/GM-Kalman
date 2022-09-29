@@ -264,18 +264,18 @@ if __name__ == '__main__':
     # project graphics 1 (Project Time Cost Distribution)
     plt.figure()
     plt.plot(ps.dist_gm.keys(), ps.dist_gm.values(), color="lightskyblue", marker="o", linestyle="--",
-             label="Gray Model")
+             label="本文方法")
     plt.plot(ps.dist_sp.keys(), ps.dist_sp.values(), color="orange", marker="o", linestyle="--",
-             label="Static Partition")
+             label="静态三分法")
     plt.plot(ps.dist_rp.keys(), ps.dist_rp.values(), color="lightgreen", marker="o", linestyle="--",
-             label="Relative Partition")
+             label="相对监控法")
     plt.plot(ps.dist_dp.keys(), ps.dist_dp.values(), color="violet", marker="o", linestyle="--",
-             label="Dynamic Partition")
+             label="动态监控法")
     plt.legend()
     plt.grid(True)
-    plt.xlabel("Buffer")
-    plt.ylabel("Number")
-    plt.title("Project Time Cost Distribution")
+    plt.xlabel("工期")
+    plt.ylabel("数量")
+    plt.title("项目完工时间消耗分布")
     # plt.savefig("./figure/project_simulate.png")
     plt.show()
     print("hello")
