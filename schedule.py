@@ -59,11 +59,18 @@ class Schedule(object):
         if not b:
             self.actual = len(self.progress)
 
+    def gen_log_norm(self):
+        """
+        :function: generate random log normal distribute project schedule
+        """
+        pass
+
     def gen_beta(self):
         """
         :function: generate random beta distribute project schedule
         """
         self.velocity = np.random.beta(1, 1, self.period)
+        pass
 
 
 if __name__ == '__main__':
