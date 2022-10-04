@@ -64,7 +64,44 @@ class Schedule(object):
         """
         :function: generate random log normal distribute project schedule
         """
-        pass
+        self.velocity = np.reciprocal(np.random.lognormal(np.log(self.period), self.sigma, self.period))
+        """
+        # velocity should be restricted when sigma is large...
+        for i in range(0, len(self.velocity)):
+            if self.velocity[i] > 1./self.period:
+                self.velocity[i] = 1./self.period
+        """
+        self.progress = np.insert(np.cumsum(self.velocity), 0, 0.0)
+        # if progress array has already reached 1.0
+        b = False
+        index = 0
+        for i in range(self.progress.size):
+            if self.progress[i] > 1.0:
+                if not b:
+                    b = True
+                    index = i
+                self.progress[i] = 1.0
+        if b:
+            for i in range(index, self.velocity.size):
+                self.velocity[i] = 0.0
+        # if progress array not reached 1.0
+        while self.progress[-1] < 1.0:
+            velocity = np.reciprocal(np.random.lognormal(np.log(self.period), self.sigma))
+            progress = self.progress[-1] + velocity
+            if progress > 1.0:
+                progress = 1.0
+            self.velocity = np.append(self.velocity, velocity)
+            self.progress = np.append(self.progress, progress)
+        self.velocity = np.append(self.velocity, 0.0)
+        # calculate actual time
+        b = False
+        for i in range(0, len(self.progress)):
+            if self.progress[i] >= 1.:
+                b = True
+                self.actual = i
+                break
+        if not b:
+            self.actual = len(self.progress)
 
     def gen_beta(self):
         """
@@ -76,13 +113,13 @@ class Schedule(object):
 
 if __name__ == '__main__':
     period = 25
-    sigma = 0.1
+    sigma = 0.3
     number = 1000000
     dist_t = dict()
     dist_v = dict()
     # generate log normal distribution data
     arr_t = np.random.lognormal(np.log(period), sigma, number)
-    arr_v = np.around(1/arr_t, 3)
+    arr_v = np.around(np.reciprocal(arr_t), 3)
     arr_t = np.around(arr_t, 1)
     # update data to dictionary
     keys = np.unique(arr_t)
