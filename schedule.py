@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
+import numpy
 import numpy as np
 
 
@@ -74,30 +75,40 @@ class Schedule(object):
 
 
 if __name__ == '__main__':
-    period = 15
-    sigma = 1
+    period = 25
+    sigma = 0.1
     number = 1000000
-    arr_t = np.random.normal(period, sigma, number)
-    arr_v = np.zeros(number)
-    for i in range(len(arr_t)):
-        if arr_t[i] < 0.01:
-            arr_t[i] = 0.01
-        arr_v[i] = np.around(1./arr_t[i], 3)
-    # arr = np.around(np.random.normal(period, sigma, number), 1)
-    # arr = np.sort(arr)
-    # dist calc
-    dist = dict()
+    dist_t = dict()
+    dist_v = dict()
+    # generate log normal distribution data
+    arr_t = np.random.lognormal(np.log(period), sigma, number)
+    arr_v = np.around(1/arr_t, 3)
+    arr_t = np.around(arr_t, 1)
+    # update data to dictionary
+    keys = np.unique(arr_t)
+    for k in keys:
+        v = arr_t[arr_t == k].size
+        dist_t[k] = v
     keys = np.unique(arr_v)
     for k in keys:
         v = arr_v[arr_v == k].size
-        dist[k] = v
-    # plot figure
+        dist_v[k] = v
+    # plot figure(project time cost)
     plt.figure()
-    plt.plot(dist.keys(), dist.values(), color="lightskyblue", marker="x", linestyle="--", label="Beta")
+    plt.plot(dist_t.keys(), dist_t.values(), color="lightskyblue", marker="x", linestyle="--", label="time")
     plt.legend()
     plt.grid(True)
     plt.xlabel("number")
     plt.ylabel("value")
-    plt.title("Beta Distribution")
+    plt.title("Project Time Cost Log Normal Distribution")
+    plt.show()
+    # plot figure(project activities velocity)
+    plt.figure()
+    plt.plot(dist_v.keys(), dist_v.values(), color="lightcoral", marker="x", linestyle="--", label="velocity")
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel("number")
+    plt.ylabel("value")
+    plt.title("Project Activities Velocity Log Normal Distribution")
     plt.show()
     pass
