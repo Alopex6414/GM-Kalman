@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # generate schedule
     t = 15
     buffer = 5
-    s = Schedule(period=t, sigma=0.5)
+    s = Schedule(period=t, sigma=0.2)
     s.gen_log_norm()
     print("progress(original):", s.progress)
     print("velocity(original):", s.velocity)
