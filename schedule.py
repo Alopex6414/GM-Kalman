@@ -9,7 +9,7 @@ class Schedule(object):
     def __init__(self, period, sigma=0.05):
         """
         :param period: schedule period(eg. 15d or 20d)
-        :param period: variation coefficient(eg. 0.05)
+        :param sigma: variation coefficient(eg. 0.05)
         """
         self.period = period
         self.sigma = sigma
@@ -17,6 +17,8 @@ class Schedule(object):
         self.actual = None
         self.velocity = None
         self.progress = None
+        self.upper = None
+        self.lower = None
 
     def gen(self):
         """
@@ -60,17 +62,19 @@ class Schedule(object):
         if not b:
             self.actual = len(self.progress)
 
-    def gen_log_norm(self):
+    def gen_log_norm(self, upper, lower):
         """
         :function: generate random log normal distribute project schedule
+        :param upper: optimistic period (eg. 20d if most possible time is 15d)
+        :param lower: pessimistic period (eg. 10d if most possible time is 15d)
         """
-        self.velocity = np.reciprocal(np.random.lognormal(np.log(self.period), self.sigma, self.period))
-        """
+        self.upper = upper
+        self.lower = lower
+        velocity = np.reciprocal(np.random.lognormal(np.log(self.period), self.sigma, self.period))
         # velocity should be restricted when sigma is large...
-        for i in range(0, len(self.velocity)):
-            if self.velocity[i] > 1./self.period:
-                self.velocity[i] = 1./self.period
-        """
+        for i in range(0, len(velocity)):
+            if 1./upper <= velocity[i] <= 1./lower:
+                self.velocity = np.append(self.velocity, velocity[i])
         self.progress = np.insert(np.cumsum(self.velocity), 0, 0.0)
         # if progress array has already reached 1.0
         b = False
@@ -87,6 +91,9 @@ class Schedule(object):
         # if progress array not reached 1.0
         while self.progress[-1] < 1.0:
             velocity = np.reciprocal(np.random.lognormal(np.log(self.period), self.sigma))
+            # velocity should be restricted when sigma is large...
+            if velocity < 1. / upper or velocity > 1. / lower:
+                continue
             progress = self.progress[-1] + velocity
             if progress > 1.0:
                 progress = 1.0
@@ -114,11 +121,18 @@ class Schedule(object):
 if __name__ == '__main__':
     period = 25
     sigma = 0.3
-    number = 1000000
+    upper = 40
+    lower = 10
+    number = 10000
+    arr_t = np.empty(shape=(0, 0))
+    arr_v = np.empty(shape=(0, 0))
     dist_t = dict()
     dist_v = dict()
     # generate log normal distribution data
-    arr_t = np.random.lognormal(np.log(period), sigma, number)
+    arr = np.random.lognormal(np.log(period), sigma, number)
+    for i in range(0, len(arr)):
+        if lower < arr[i] < upper:
+            arr_t = np.append(arr_t, arr[i])
     arr_v = np.around(np.reciprocal(arr_t), 3)
     arr_t = np.around(arr_t, 1)
     # update data to dictionary
