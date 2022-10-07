@@ -19,10 +19,10 @@ def print_hi(name):
 if __name__ == '__main__':
     print_hi('PyCharm')
     # generate schedule
-    t = 15
-    buffer = 5
-    upper = 60
-    lower = 10
+    t = 10
+    buffer = 2
+    upper = 35
+    lower = 5
     s = Schedule(period=t, sigma=1)
     s.gen_log_norm(upper, lower)
     print("progress(original):", s.progress)
