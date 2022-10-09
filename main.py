@@ -19,11 +19,11 @@ def print_hi(name):
 if __name__ == '__main__':
     print_hi('PyCharm')
     # generate schedule
-    t = 10
-    buffer = 2
-    upper = 35
-    lower = 5
-    s = Schedule(period=t, sigma=1)
+    t = 15
+    buffer = 3
+    upper = 40
+    lower = 10
+    s = Schedule(period=t, sigma=5)
     s.gen_log_norm(upper, lower)
     print("progress(original):", s.progress)
     print("velocity(original):", s.velocity)
@@ -37,6 +37,18 @@ if __name__ == '__main__':
     # gm = GMControl(kf.X, 5)
     # gm.gray_predict()
     GMControl.setup_array(kf.X)
+    """test start"""
+    plt.figure()
+    plt.plot(s.progress, 'rx--')
+    plt.plot(s.velocity, 'bo:')
+    plt.plot(kf.X[0, :], 'gx--')
+    plt.plot(kf.X[1, :], 'yo:')
+    plt.grid(linestyle='--', linewidth=1.0)
+    plt.xlabel("time")
+    plt.ylabel("progress")
+    plt.title("Kalman Filter")
+    plt.show()
+    """test end"""
     plt.figure()
     """Plot1 Kalman Filter"""
     plt.subplot(2, 2, 1)
