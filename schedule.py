@@ -62,6 +62,9 @@ class Schedule(object):
         if not b:
             self.actual = len(self.progress)
 
+    def gen2(self):
+        pass
+
     def gen_log_norm(self, upper, lower):
         """
         :function: generate random log normal distribute project schedule
