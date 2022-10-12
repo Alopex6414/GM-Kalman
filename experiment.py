@@ -36,7 +36,7 @@ class ExperimentSingle(object):
     def simulate(self):
         # generate schedule
         self.schedule = Schedule(self.period, sigma=self.sigma)
-        self.schedule.gen_log_norm(upper=60, lower=10)
+        self.schedule.gen2(upper=60, lower=10)
         # kalman filter
         self.kalman = KalmanFilter(self.schedule.progress, self.schedule.velocity)
         self.kalman.filter()

@@ -70,6 +70,7 @@ class Schedule(object):
         """
         self.upper = upper
         self.lower = lower
+        self.velocity = np.empty(shape=(0, 0))
         velocity = np.random.normal(self.mu, self.sigma, self.period)
         # velocity should be restricted when sigma is large...
         for i in range(0, len(velocity)):
