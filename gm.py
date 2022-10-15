@@ -243,24 +243,28 @@ class GMControl(GM):
         super(GMControl, self).gray_predict2()
         # whether prediction will have delay?
         if len(self.D0) < self.t:
-            if self.G[self.t] < 1.:
-                # check active predict with buffer
-                index = -1
-                if self.t_safe < len(self.G):
-                    index = self.t_safe
-                # control progress...
-                if self.G[index] < 1.:
-                    GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[self.t])
-                    GMControl.Status.update(
-                        {"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": 1}})
-                    GMControl.Count = GMControl.Count + 1
-                else:
-                    GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[self.t])
-                    GMControl.Status.update(
-                        {"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": 1}})
-                    GMControl.Count = GMControl.Count + 1
-            else:
+            # check actual finish time and period
+            if len(self.G) <= self.t:
                 GMControl.Status.update({"{}".format(len(self.D0)): {"status": "G", "risk": "low", "control": 0}})
+            else:
+                if self.G[self.t] < 1.:
+                    # check active predict with buffer
+                    index = -1
+                    if self.t_safe < len(self.G):
+                        index = self.t_safe
+                    # control progress...
+                    if self.G[index] < 1.:
+                        GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.75 * (1. - self.G[self.t])
+                        GMControl.Status.update(
+                            {"{}".format(len(self.D0)): {"status": "R", "risk": "high", "control": 1}})
+                        GMControl.Count = GMControl.Count + 1
+                    else:
+                        GMControl.X[1, len(self.D0)] = GMControl.X[1, len(self.D0)] + 0.5 * (1. - self.G[self.t])
+                        GMControl.Status.update(
+                            {"{}".format(len(self.D0)): {"status": "Y", "risk": "medium", "control": 1}})
+                        GMControl.Count = GMControl.Count + 1
+                else:
+                    GMControl.Status.update({"{}".format(len(self.D0)): {"status": "G", "risk": "low", "control": 0}})
         else:
             if self.G[-1] < 1.:
                 # check active predict with buffer
