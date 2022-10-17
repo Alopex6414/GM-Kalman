@@ -12,7 +12,7 @@ from dynamic import DPControl
 
 
 class ExperimentSingle(object):
-    def __init__(self, period, buffer, sigma):
+    def __init__(self, period, buffer, sigma, upper, lower):
         """
         :param period: please input schedule period
         :param buffer: please input schedule buffer
@@ -20,6 +20,8 @@ class ExperimentSingle(object):
         self.period = period
         self.buffer = buffer
         self.sigma = sigma
+        self.upper = upper
+        self.lower = lower
         self.time_expect = self.period
         self.time_cc = 0
         self.time_gm = 0
@@ -36,7 +38,7 @@ class ExperimentSingle(object):
     def simulate(self):
         # generate schedule
         self.schedule = Schedule(self.period, sigma=self.sigma)
-        self.schedule.gen2(upper=60, lower=10)
+        self.schedule.gen2(upper=self.upper, lower=self.lower)
         # kalman filter
         self.kalman = KalmanFilter(self.schedule.progress, self.schedule.velocity)
         self.kalman.filter()
@@ -104,7 +106,7 @@ class ExperimentSingle(object):
 
 
 class ExperimentMultiple(ExperimentSingle):
-    def __init__(self, period, buffer, sigma, number):
+    def __init__(self, period, buffer, sigma, number, upper, lower):
         """
         :param period: please input schedule period
         :param buffer: please input schedule buffer
@@ -492,6 +494,6 @@ class ExperimentMultiple(ExperimentSingle):
 
 
 if __name__ == '__main__':
-    s = ExperimentMultiple(15, 3, 0.05, 10000)
+    s = ExperimentMultiple(15, 5, 0.05, 10000)
     s.simulate()
     s.show()
