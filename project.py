@@ -11,12 +11,12 @@ from dynamic import DPControl
 
 
 class Active(object):
-    def __init__(self, period, buffer, sigma=0.05) -> None:
-        self.active = ExperimentSingle(period, buffer, sigma)
+    def __init__(self, period, buffer, sigma, upper, lower) -> None:
+        self.active = ExperimentSingle(period, buffer, sigma, upper, lower)
         self.next = None
 
     def simulate(self):
-        self.simulate()
+        self.active.simulate()
 
 
 class Chain(object):
@@ -97,7 +97,7 @@ class Chain(object):
         cur = self.head
         self.clean()
         while cur is not None:
-            cur.active.simulate()
+            cur.simulate()
             self.period += cur.active.time_expect
             self.time_gm += cur.active.time_gm
             self.time_sp += cur.active.time_sp
