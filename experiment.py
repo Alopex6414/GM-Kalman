@@ -166,7 +166,7 @@ class ExperimentMultiple(ExperimentSingle):
         self.dist_dev_sp = dict()
         self.dist_dev_rp = dict()
         self.dist_dev_dp = dict()
-        super(ExperimentMultiple, self).__init__(period, buffer, sigma)
+        super(ExperimentMultiple, self).__init__(period, buffer, sigma, upper, lower)
 
     def simulate(self):
         # collect all data
