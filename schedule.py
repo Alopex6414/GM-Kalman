@@ -91,7 +91,10 @@ class Schedule(object):
                 self.velocity[i] = 0.0
         # if progress array not reached 1.0
         while self.progress[-1] < 1.0:
-            velocity = abs(np.random.normal(self.mu, self.sigma))
+            velocity = np.random.normal(self.mu, self.sigma)
+            # velocity should be restricted when sigma is large...
+            if velocity < 1. / upper or velocity > 1. / lower:
+                continue
             progress = self.progress[-1] + velocity
             if progress > 1.0:
                 progress = 1.0
