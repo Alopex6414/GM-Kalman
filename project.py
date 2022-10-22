@@ -232,7 +232,7 @@ if __name__ == '__main__':
     activeKM = Active(6, 5, 0.06, 31, 1)
     activeJM = Active(10, 3, 0.1, 25, 7)
     activeLM = Active(7, 5, 0.07, 32, 2)
-    activeNOP = Active(6, 3, 0.06, 21, 3)
+    activeNOP = Active(6, 2, 0.06, 16, 4)
     # chain1
     chain1 = Chain(activeABDF)
     chain1.append(activeH)
@@ -257,9 +257,9 @@ if __name__ == '__main__':
     # project simulator calculate
     number = 10000
     ps = ProjectSimulator(number)
-    ps.append(chain1)
+    # ps.append(chain1)
     ps.append(chain2)
-    ps.append(chain3)
+    # ps.append(chain3)
     ps.simulate()
     # project graphics charts
     # project graphics 1 (Project Time Cost Distribution)
