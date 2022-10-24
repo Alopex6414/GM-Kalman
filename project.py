@@ -216,7 +216,7 @@ if __name__ == '__main__':
     activeE = Active(2, 1, 0.02, 3, 1)
     activeF = Active(1, 1, 0.01, 2, 1)
     # activeG = Active(21, 7, 0.21, 56, 14)
-    activeG = Active(21, 7, 0.21, 63, 21)
+    activeG = Active(21, 7, 0.21, 56, 21)
     activeH = Active(15, 5, 0.15, 40, 15)
     activeI = Active(18, 6, 0.18, 48, 12)
     activeJ = Active(9, 3, 0.09, 24, 6)
@@ -229,14 +229,14 @@ if __name__ == '__main__':
     # Combine Activities
     activeABDF = Active(7, 3, 0.07, 22, 4)
     # activeABCF = Active(8, 3, 0.08, 23, 5)
-    activeABCF = Active(8, 3, 0.08, 26, 8)
+    activeABCF = Active(8, 3, 0.08, 23, 8)
     activeABEF = Active(7, 3, 0.07, 22, 4)
     activeKM = Active(6, 5, 0.06, 31, 1)
     # activeJM = Active(10, 3, 0.1, 25, 7)
-    activeJM = Active(10, 4, 0.1, 34, 10)
+    activeJM = Active(10, 3, 0.1, 25, 10)
     activeLM = Active(7, 5, 0.07, 32, 2)
     # activeNOP = Active(6, 2, 0.06, 16, 4)
-    activeNOP = Active(6, 2, 0.06, 18, 6)
+    activeNOP = Active(6, 2, 0.06, 16, 6)
     # chain1
     chain1 = Chain(activeABDF)
     chain1.append(activeH)
@@ -259,7 +259,7 @@ if __name__ == '__main__':
     project1.append(chain3)
     project1.simulate()
     # project simulator calculate
-    number = 10000
+    number = 20000
     ps = ProjectSimulator(number)
     # ps.append(chain1)
     ps.append(chain2)
