@@ -209,7 +209,7 @@ class ProjectSimulator(object):
 
 if __name__ == '__main__':
     # Project Activities
-    activeA = Active(3, 1, 0.03, 4, 2)
+    activeA = Active(3, 1, 0.03, 8, 2)
     activeB = Active(1, 1, 0.01, 2, 1)
     activeC = Active(3, 1, 0.03, 4, 2)
     activeD = Active(2, 1, 0.02, 3, 1)

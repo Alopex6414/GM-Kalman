@@ -494,6 +494,6 @@ class ExperimentMultiple(ExperimentSingle):
 
 
 if __name__ == '__main__':
-    s = ExperimentMultiple(15, 5, 0.05, 10000)
+    s = ExperimentMultiple(3, 1, 0.03, 10000, 8, 2)
     s.simulate()
     s.show()
