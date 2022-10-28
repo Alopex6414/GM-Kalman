@@ -209,12 +209,12 @@ class ProjectSimulator(object):
 
 if __name__ == '__main__':
     # Project Activities
-    activeA = Active(3, 1, 0.03, 4, 2)
-    activeB = Active(1, 1, 0.01, 2, 1)
-    activeC = Active(3, 1, 0.03, 4, 2)
-    activeD = Active(2, 1, 0.02, 3, 1)
-    activeE = Active(2, 1, 0.02, 3, 1)
-    activeF = Active(1, 1, 0.01, 2, 1)
+    activeA = Active(3, 1, 0.03, 8, 2)
+    activeB = Active(1, 1, 0.01, 6, 1)
+    activeC = Active(3, 1, 0.03, 8, 2)
+    activeD = Active(2, 1, 0.02, 7, 1)
+    activeE = Active(2, 1, 0.02, 7, 1)
+    activeF = Active(1, 1, 0.01, 6, 1)
     # activeG = Active(21, 7, 0.21, 56, 14)
     activeG = Active(21, 7, 0.21, 56, 21)
     activeH = Active(15, 5, 0.15, 40, 15)
@@ -222,7 +222,7 @@ if __name__ == '__main__':
     activeJ = Active(9, 3, 0.09, 24, 6)
     activeK = Active(5, 2, 0.05, 15, 3)
     activeL = Active(6, 2, 0.06, 16, 4)
-    activeM = Active(1, 0, 0.01, 1, 1)
+    activeM = Active(1, 0, 0.01, 6, 1)
     activeN = Active(3, 2, 0.03, 13, 1)
     activeO = Active(2, 1, 0.02, 7, 1)
     activeP = Active(1, 0, 0.01, 1, 1)
